@@ -1,0 +1,71 @@
+[
+  {
+    "type": "ebook-reader",
+    "text": "As the sun dipped behind the jagged ridge of the western cliffs, casting long fingers of shadow across the plain, Elira sat quietly beneath the twisted branches of an old juniper tree. The wind carried the scent of sage and dust, whispering across the scorched earth like a forgotten lullaby. Around her, the camp stirred with the usual unease that came before battle—sharpening blades, murmured prayers, the clink of armor—but she remained still, her hands resting on her knees, her breath slow and measured.\n\nIt was not indifference that steadied her. It was equanimity she had cultivated over years of war, betrayal, and loss. Where others were pulled into the storm of panic or ambition, Elira had learned to stand unmoved. The fire within her had not gone out; it had simply stopped raging. Now it burned steady, like a lantern against the night.\n\nAcross the fire, Captain Harven watched her with a mixture of awe and disbelief. “You don’t flinch, even now,” he said, his voice low. “Tomorrow we may all be dead, and yet you sit as if this were just another evening.”\n\nElira opened her eyes and met his gaze, calm and clear. “It is just another evening,” she said. “Until it isn’t. And when that moment comes, trembling won’t change it. Equanimity is not denial, Captain—it is the only armor that never breaks.”",
+    "next-trigger": {
+      "action": "menu-select",
+      "action-args": {"context-menu-name": "Dictionary", "selection": "equanimity"},
+      "animation-direction": "forward"
+    }
+  },
+  {
+    "type": "dictionary",
+    "text": "<b>Equanimity</b> (<i>noun</i>)<br>1. Mental calmness and composure, especially in difficult situations.",
+    "next-trigger": {
+      "action": "menu-select",
+      "action-args": {"context-menu-name": "Dictionary", "selection": "composure"},
+      "animation-direction": "forward"
+    }
+  },
+  {
+    "type": "dictionary",
+    "text": "**Composure** (*noun*)\n1. The state of being calm and in control of oneself.\n2. Calmness of manner under stress; self-possession or sangfroid.",
+    "next-trigger": {
+      "action": "menu-select",
+      "action-args": {"context-menu-name": "Dictionary", "selection": "sangfroid"},
+      "animation-direction": "backward"
+    }
+  },
+  {
+    "type": "dictionary",
+    "text": "**Composure** (*noun*)\n1. The state of being calm and in control of oneself.\n2. Calmness of manner under stress; self-possession or sangfroid.",
+    "next-trigger": {
+      "action": "menu-select",
+      "action-args": {"context-menu-name": "Dictionary", "selection": "sangfroid"},
+      "animation-direction": "forward"
+    }
+  },
+  {
+    "type": "dictionary",
+    "text": "**Sangfroid** (*noun*)\n1. Coolness and self-control, especially under pressure or in trying circumstances.",
+    "next-trigger": {
+      "action": "menu-select",
+      "action-args": {"context-menu-name": "Dictionary", "selection": "trying circumstances"},
+      "animation-direction": "forward"
+    }
+  },
+  {
+    "type": "dictionary",
+    "text": "**Trying circumstances** (*phrase*)\n1. Conditions or situations that are difficult or distressing and require forbearance.",
+    "next-trigger": {
+      "action": "menu-select",
+      "action-args": {"context-menu-name": "Dictionary", "selection": "forbearance"},
+      "animation-direction": "forward"
+    }
+  },
+  {
+    "type": "dictionary",
+    "text": "**Forbearance** (*noun*)\n1. Patient self-control; tolerance in the face of provocation.\n2. The act of refraining from something; restraint.",
+    "next-trigger": {
+      "action": "menu-select",
+      "action-args": {"context-menu-name": "Dictionary", "selection": "restraint"},
+      "animation-direction": "forward"
+    }
+  },
+  {
+    "type": "dictionary",
+    "text": "**Restraint** (*noun*)\n1. A measure or condition that keeps someone or something under control.\n2. The act of holding back or suppressing something.",
+    "next-trigger": {
+    }
+  }
+]
