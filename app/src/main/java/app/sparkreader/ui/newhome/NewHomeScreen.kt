@@ -451,32 +451,32 @@ fun NewHomeScreen(
               )
             }
             
-            DropdownMenuItem(
-              text = { 
-                Text(
-                  "Our Vision",
-                  style = MaterialTheme.typography.bodyLarge
-                ) 
-              },
-              leadingIcon = {
-                Icon(
-                  imageVector = Icons.Default.Visibility,
-                  contentDescription = null,
-                  tint = MaterialTheme.colorScheme.onSurface
-                )
-              },
-              onClick = {
-                showOverflowMenu = false
-                coroutineScope.launch {
-                  snackbarHostState.currentSnackbarData?.dismiss()
-                  snackbarHostState.showSnackbar(
-                    message = "Our Vision - Coming soon!",
-                    actionLabel = "Dismiss",
-                    duration = SnackbarDuration.Long
-                  )
-                }
-              }
-            )
+            // DropdownMenuItem(
+            //   text = { 
+            //     Text(
+            //       "Our Vision",
+            //       style = MaterialTheme.typography.bodyLarge
+            //     ) 
+            //   },
+            //   leadingIcon = {
+            //     Icon(
+            //       imageVector = Icons.Default.Visibility,
+            //       contentDescription = null,
+            //       tint = MaterialTheme.colorScheme.onSurface
+            //     )
+            //   },
+            //   onClick = {
+            //     showOverflowMenu = false
+            //     coroutineScope.launch {
+            //       snackbarHostState.currentSnackbarData?.dismiss()
+            //       snackbarHostState.showSnackbar(
+            //         message = "Our Vision - Coming soon!",
+            //         actionLabel = "Dismiss",
+            //         duration = SnackbarDuration.Long
+            //       )
+            //     }
+            //   }
+            // )
             
             DropdownMenuItem(
               text = { 
