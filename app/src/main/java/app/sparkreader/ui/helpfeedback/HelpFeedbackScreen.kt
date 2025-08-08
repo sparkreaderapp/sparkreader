@@ -107,7 +107,7 @@ fun HelpFeedbackScreen(
 • Advanced OCR for easy import of books  
 • A curated public domain book library  
 • All these features work fully offline, with no Internet connection required and no data ever leaving your device"""
-    )
+    ),
     FaqItem(
       question = "How do I configure or change the AI model?",
       answer = """go to Settings > Model manager. There you can download, delete, and set the default model."""
@@ -139,7 +139,7 @@ Our selection covers a wide range of disciplines, including philosophy, religion
 • Bug reports - GitHub or Discord
 • Feature requests - GitHub or Discord
 """
-    ),
+    )
   )
 
   Scaffold(
