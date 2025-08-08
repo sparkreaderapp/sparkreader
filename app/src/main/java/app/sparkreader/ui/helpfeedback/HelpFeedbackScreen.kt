@@ -88,52 +88,48 @@ fun HelpFeedbackScreen(
       question = "Getting Started",
       answer = """To get started with SparkReader:
 
-1. The Gemma 3n model should have been configured on startup. This multimodal model enables both OCR for importing images and contextual explanations (an advanced contextual dictionary).
+1. You should go to Settings > Model manager to download a Gemma 3n model. This multimodal model enables both contextual explanations and OCR for importing images.
 
-2. Import books by clicking the plus (+) sign. You can:
-   • Take a picture of book pages
-   • Capture a piece of newspaper
-   • Import an EPUB file
-   • Download and import from the SparkReader Library
-
-3. Once a book is added to your library, tap on it to start reading."""
+2. Add books into your library. Currently the supported modes are:
+   • Importing book from the SparkReader starter library (which you need to download from Settings), or
+   • Creating your own books by editing book pages manually or by converting images to text.
+   
+3. Once a book is added to your library, tap on it to start reading, getting explanations, and chatting about the book!"""
     ),
+  
+    FaqItem(
+      question = "What makes SparkReader different?",
+      answer = """SparkReader combines:
+
+• Contextual AI explanations (not just definitions) for dense, rare, ambiguous, or archaic vocabulary, jargon, and cultural references  
+• Ability to ask follow-up questions  
+• All this without leaving the app or interrupting your reading  
+• Advanced OCR for easy import of books  
+• A curated public domain book library  
+• All these features work fully offline, with no Internet connection required and no data ever leaving your device"""
+    )
     FaqItem(
       question = "How do I configure or change the AI model?",
-      answer = """The Gemma 3n model should have been automatically configured when you first started the app. 
-
-You can view and change the model at any time through Settings. The model enables:
-• OCR for importing images
-• Contextual explanations for text
-• Advanced language understanding
-
-To change models, go to Settings from the menu."""
+      answer = """go to Settings > Model manager. There you can download, delete, and set the default model."""
     ),
     FaqItem(
       question = "How does the contextual explanation work?",
       answer = """Unlike a traditional dictionary, SparkReader provides contextual explanations:
 
-• Select any piece of text while reading
-• An explanation appears automatically
-• The explanation considers the context of the passage
-• Perfect for old or technical texts
-• Enable auto-explain mode to skip tapping "explain" after each selection"""
+• By selecting any piece of text while reading, two context menu buttons appear automatically
+• Explain: explains the selection while keeping the explanation relevant to the context of the page in question
+• Quote: copies the selection into the chat, so that you can ask questions about the selection.
+You can also ask follow-up questions in a conventional chat interface."""
     ),
     FaqItem(
       question = "What books are included in SparkReader Library?",
-      answer = """Diverse ..."""
-    ),
-    FaqItem(
-      question = "Can I export my annotated books?",
-      answer = """Yes! You can export an annotated version of your book as a PDF. This includes all your highlights and contextual explanations, making it perfect for study or reference."""
+      answer = """We have endeavored to include seminal public domain books spanning the entirety of human history—from ancient times to the present—and across diverse world regions.
+Our selection covers a wide range of disciplines, including philosophy, religion, science, and law, as well as literary fiction genres such as crime, thriller, and mystery, and non-fiction categories such as travel writing and biographies.
+      """
     ),
     FaqItem(
       question = "Is SparkReader open source?",
-      answer = """Yes! Both the app and the library are open source. You can:
-
-• Submit pull requests (contributions welcome!)
-• Access the source code and contribute to the project
-• Join our community of contributors"""
+      answer = """Yes! Both the app and the library are open source. Contributions are welcome—whether as a one-time pull request or by joining as a regular collaborator.""")
     ),
     FaqItem(
       question = "Where can I discuss books or report issues?",
@@ -142,20 +138,8 @@ To change models, go to Settings from the menu."""
 • Book discussions (additions, removals, etc.) - Discord only
 • Bug reports - GitHub or Discord
 • Feature requests - GitHub or Discord
-
-Book-related discussions are solely performed on Discord to keep our community engaged and allow for real-time conversations about library content."""
+"""
     ),
-    FaqItem(
-      question = "What makes SparkReader different?",
-      answer = """SparkReader combines:
-
-• Advanced OCR for easy book importing
-• Contextual AI explanations (not just definitions)
-• Support for old and technical texts
-• Open source community
-• Export capabilities for annotated PDFs
-• Auto-explain mode for seamless reading"""
-    )
   )
 
   Scaffold(
