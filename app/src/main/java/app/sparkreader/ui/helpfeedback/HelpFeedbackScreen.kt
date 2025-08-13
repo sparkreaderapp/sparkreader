@@ -129,7 +129,7 @@ Our selection covers a wide range of disciplines, including philosophy, religion
     ),
     FaqItem(
       question = "Is SparkReader open source?",
-      answer = """Yes! Both the app and the library are open source. Contributions are welcome—whether as a one-time pull request or by joining as a regular collaborator.""")
+      answer = """Yes! Both the app and the library are open source. Contributions are welcome—whether as a one-time pull request or by joining as a regular collaborator."""
     ),
     FaqItem(
       question = "Where can I discuss books or report issues?",
