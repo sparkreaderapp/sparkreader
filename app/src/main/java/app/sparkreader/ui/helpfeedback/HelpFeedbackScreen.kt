@@ -203,7 +203,7 @@ Our selection covers a wide range of disciplines, including philosophy, religion
           title = "Report a Bug or Request a Feature on GitHub",
           subtitle = "Submit issues and contribute to the project",
           onClick = {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sparkreader/sparkreader/issues"))
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sparkreaderapp/sparkreader/issues"))
             context.startActivity(intent)
           }
         )
@@ -223,25 +223,25 @@ Our selection covers a wide range of disciplines, including philosophy, religion
         )
       }
       
-      // Rate the App
-      item {
-        ActionCard(
-          icon = Icons.Default.Star,
-          title = "Rate the App",
-          subtitle = "Love SparkReader? Let us know!",
-          onClick = {
-            // TODO: Replace with actual Play Store link
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=app.sparkreader"))
-            try {
-              context.startActivity(intent)
-            } catch (e: Exception) {
-              // If Play Store app is not installed, open in browser
-              val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=app.sparkreader"))
-              context.startActivity(webIntent)
-            }
-          }
-        )
-      }
+      // // Rate the App
+      // item {
+      //   ActionCard(
+      //     icon = Icons.Default.Star,
+      //     title = "Rate the App",
+      //     subtitle = "Love SparkReader? Let us know!",
+      //     onClick = {
+      //       // TODO: Replace with actual Play Store link
+      //       val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=app.sparkreader"))
+      //       try {
+      //         context.startActivity(intent)
+      //       } catch (e: Exception) {
+      //         // If Play Store app is not installed, open in browser
+      //         val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=app.sparkreader"))
+      //         context.startActivity(webIntent)
+      //       }
+      //     }
+      //   )
+      // }
 
       // Share the App
       item {
