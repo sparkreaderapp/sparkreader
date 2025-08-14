@@ -24,7 +24,7 @@ We currently have **four high-priority contribution areas (in order)**:
 4. **Image Support**
    - The book reader screen ([BookDetailScreen](https://github.com/sparkreaderapp/sparkreader/blob/main/app/src/main/java/app/sparkreader/ui/bookdetail/BookDetailScreen.kt), a relic from the app's early days) currently uses [AndroidView](https://developer.android.com/develop/ui/compose/migrate/interoperability-apis/views-in-compose) to display book texts.
    - Adding image rendering support would greatly improve the reading experience and will make it possible for users to read books with illustrations.
-   - 
+   
 ---
 
 ## 🛠 How to Contribute
