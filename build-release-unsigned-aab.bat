@@ -1,5 +1,5 @@
 @echo off
-echo Building unsigned release AAB...
+echo Building signed release AAB...
 echo.
 
 REM Clean the project first
@@ -11,9 +11,9 @@ if %ERRORLEVEL% neq 0 (
     exit /b 1
 )
 
-REM Build the unsigned release AAB
-echo Building unsigned release AAB...
-call gradlew :app:bundleReleaseUnsigned
+REM Build the signed release AAB
+echo Building signed release AAB...
+call gradlew :app:bundleRelease
 if %ERRORLEVEL% neq 0 (
     echo Build failed!
     pause
@@ -22,6 +22,6 @@ if %ERRORLEVEL% neq 0 (
 
 echo.
 echo Build completed successfully!
-echo AAB file location: app\build\outputs\bundle\releaseUnsigned\app-releaseUnsigned.aab
+echo AAB file location: app\build\outputs\bundle\release\app-release.aab
 echo.
 pause
