@@ -24,8 +24,7 @@ if %ERRORLEVEL% neq 0 (
 
 REM Build the signed release AAB
 echo Building signed release AAB...
-call gradlew :app:bundleRelease
-REM call gradlew :app:buildDebug
+call gradlew :app:bundleRelease --info --stacktrace
 if %ERRORLEVEL% neq 0 (
     echo Build failed!
     pause
