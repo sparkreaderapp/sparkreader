@@ -42,3 +42,4 @@ app/build
 
 # Release keystore
 release.keystore*
+gradle.secrets.properties
