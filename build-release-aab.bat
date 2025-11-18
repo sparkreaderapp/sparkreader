@@ -5,13 +5,13 @@ echo Building signed release AAB...
 echo.
 
 REM Ensure JAVA_HOME/bin is in PATH
-if defined JAVA_HOME (
-    set "PATH=%JAVA_HOME%\bin;%PATH%"
-    echo Added JAVA_HOME\bin to PATH: %JAVA_HOME%\bin
-) else (
-    echo Warning: JAVA_HOME environment variable not set. Setting it to ..\..\apps\android-studio\jbr
-    set JAVA_HOME=..\..\apps\android-studio\jbr
+if not defined JAVA_HOME (
+    echo Warning: JAVA_HOME environment variable not set. Setting it to C:\Program Files\Android\Android Studio\jbr
+    set JAVA_HOME="C:\Program Files\Android\Android Studio\jbr"
 )
+
+set "PATH=%JAVA_HOME%\bin;%PATH%"
+echo Added JAVA_HOME\bin to PATH: %JAVA_HOME%\bin
 
 REM Clean the project first
 echo Cleaning project...
@@ -25,6 +25,7 @@ if %ERRORLEVEL% neq 0 (
 REM Build the signed release AAB
 echo Building signed release AAB...
 call gradlew :app:bundleRelease
+REM call gradlew :app:buildDebug
 if %ERRORLEVEL% neq 0 (
     echo Build failed!
     pause
