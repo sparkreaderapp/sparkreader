@@ -21,6 +21,9 @@
 * (original source: https://github.com/google-ai-edge/gallery)
 */
 
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
   alias(libs.plugins.android.application)
   // Note: set apply to true to enable google-services (requires google-services.json).
@@ -54,8 +57,8 @@ android {
     create("release") {
       val secretsPropertiesFile = rootProject.file("gradle.secrets.properties")
       if (secretsPropertiesFile.exists()) {
-        val secretsProperties = java.util.Properties()
-        secretsProperties.load(java.io.FileInputStream(secretsPropertiesFile))
+        val secretsProperties = Properties()
+        secretsProperties.load(FileInputStream(secretsPropertiesFile))
         
         storeFile = file(secretsProperties["SPARKREADER_STORE_FILE"] as String)
         storePassword = secretsProperties["SPARKREADER_STORE_PASSWORD"] as String
