@@ -52,10 +52,16 @@ android {
 
   signingConfigs {
     create("release") {
-      storeFile = file(project.property("SPARKREADER_STORE_FILE") as String)
-      storePassword = project.property("SPARKREADER_STORE_PASSWORD") as String
-      keyAlias = project.property("SPARKREADER_KEY_ALIAS") as String
-      keyPassword = project.property("SPARKREADER_KEY_PASSWORD") as String
+      val secretsPropertiesFile = rootProject.file("gradle.secrets.properties")
+      if (secretsPropertiesFile.exists()) {
+        val secretsProperties = java.util.Properties()
+        secretsProperties.load(java.io.FileInputStream(secretsPropertiesFile))
+        
+        storeFile = file(secretsProperties["SPARKREADER_STORE_FILE"] as String)
+        storePassword = secretsProperties["SPARKREADER_STORE_PASSWORD"] as String
+        keyAlias = secretsProperties["SPARKREADER_KEY_ALIAS"] as String
+        keyPassword = secretsProperties["SPARKREADER_KEY_PASSWORD"] as String
+      }
     }
   }
 
