@@ -1,33 +1,36 @@
-# 📚 SparkReader - AI-Powered Ebook Reader [Beta Testers Needed!]
+# 📚 SparkReader - AI-Powered Reading Assistant [Need 12 Beta Testers!]
 
-Hey everyone! I've been working on an Android ebook reader called **SparkReader** that combines traditional reading with AI assistance, and I need 12 beta testers to help me get it ready for Google Play Store.
+Hey Reddit! I've built an Android ebook reader called **SparkReader** that's unlike anything else out there. I need 12 beta testers to help me polish it before launching on Google Play Store.
 
-## What makes SparkReader different?
+## What makes SparkReader special?
 
-🤖 **AI Chat Integration** - Ask questions about what you're reading, get explanations of complex passages, or discuss themes with an AI assistant that understands your book's context
+🧠 **Contextual AI Explanations** - Select any text while reading and get intelligent explanations that consider the full context of your book (not just dictionary definitions!)
 
-📖 **Smart Reading Features** - Built-in dictionary, contextual explanations, and quote extraction with proper citations
+💬 **Smart Chat Commands** - Ask questions like "explain this character" or "summarize page 15" and get relevant answers about your specific book
 
-📱 **OCR Text Recognition** - Take photos of physical book pages and convert them to readable text using on-device AI models
+📸 **Advanced OCR** - Take photos of physical book pages and convert them to searchable text using on-device Gemma 3n model
 
-📚 **Flexible Import Options** - Import from various sources including a curated library, or create books from images/text
+📚 **Curated Library** - Access a starter collection of public domain classics, or import your own EPUBs
 
-🎨 **Modern Material Design** - Clean, customizable interface with dark/light themes
+🔍 **Powerful Search** - Find text across pages with smart occurrence tracking and navigation
 
-## Technical highlights:
-- Runs AI models locally on your device (privacy-focused)
-- Supports multiple AI model backends
-- Smart pagination and text processing
-- No internet required for core reading features
+🎨 **Beautiful UI** - Modern Material Design 3 interface with customizable themes and reading preferences
+
+## Key technical features:
+- **100% offline** - All AI processing happens on your device (privacy first!)
+- Supports multiple AI model backends with downloadable models
+- Smart book tagging and organization system
+- Advanced text selection with context menus
+- Flexible import options (EPUB, images, manual text entry)
 
 ## What I need from beta testers:
-- Test the app with different types of books/content
-- Try out the AI chat features and OCR functionality  
-- Report any bugs or usability issues
-- Provide feedback on the overall reading experience
+- Test different book formats and import methods
+- Try the AI explanation and chat features extensively
+- Report bugs, crashes, or confusing UX
+- Give feedback on reading experience and feature usefulness
 
-The app is built with modern Android development practices (Kotlin, Jetpack Compose, Hilt) and focuses on privacy - your reading data stays on your device.
+The app is open source and built with modern Android stack (Kotlin, Jetpack Compose, Hilt, Room). Your reading data never leaves your device.
 
-**Interested in helping out?** Comment below or DM me! I'll send you the beta link once I have enough testers lined up.
+**Want to help test?** Drop a comment or DM me! Looking for users who love reading and aren't afraid to break things 😄
 
-Thanks for reading! 📖✨
+Thanks! 📖✨
