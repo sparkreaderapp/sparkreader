@@ -24,7 +24,6 @@ Changes relative to the original are documented in docs/upstream/google-ai-edge-
 
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="app.sparkreader"
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-sdk

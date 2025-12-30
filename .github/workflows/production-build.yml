@@ -26,9 +26,9 @@ jobs:
       - name: Create gradle.secrets.properties
         run: |
           cat > gradle.secrets.properties << EOF
-          SPARKREADER_STORE_FILE=app/release.keystore
+          SPARKREADER_STORE_FILE=release.keystore
           SPARKREADER_STORE_PASSWORD=${{ secrets.SPARKREADER_STORE_PASSWORD }}
-          SPARKREADER_KEY_ALIAS=${{ secrets.SPARKREADER_KEY_ALIAS }}
+          SPARKREADER_KEY_ALIAS=sparkreader
           SPARKREADER_KEY_PASSWORD=${{ secrets.SPARKREADER_KEY_PASSWORD }}
           EOF
 
