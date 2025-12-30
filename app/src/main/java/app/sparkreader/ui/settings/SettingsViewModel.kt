@@ -174,7 +174,7 @@ class SettingsViewModel @Inject constructor(
     
     viewModelScope.launch {
       val libraryZipName = "library-${latestVersion.version}.zip"
-      val libraryUrl = "https://github.com/sparkreaderapp/sparkreader-library/raw/refs/heads/main/release/$libraryZipName"
+      val libraryUrl = "https://github.com/sparkreaderapp/sparkreader-library/releases/download/${latestVersion.version}/$libraryZipName"
       
       val libraryModel = Model(
         name = "SparkReader_Library",
