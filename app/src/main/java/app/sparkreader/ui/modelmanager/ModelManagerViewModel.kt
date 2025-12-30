@@ -69,11 +69,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import net.openid.appauth.AuthorizationException
-import net.openid.appauth.AuthorizationRequest
-import net.openid.appauth.AuthorizationResponse
-import net.openid.appauth.AuthorizationService
-import net.openid.appauth.ResponseTypeValues
+//import net.openid.appauth.AuthorizationException
+//import net.openid.appauth.AuthorizationRequest
+//import net.openid.appauth.AuthorizationResponse
+//import net.openid.appauth.AuthorizationService
+//import net.openid.appauth.ResponseTypeValues
 
 private const val TAG = "AGModelManagerViewModel"
 private const val TEXT_INPUT_HISTORY_MAX_SIZE = 50
@@ -157,7 +157,7 @@ open class ModelManagerViewModel @Inject constructor(
   protected val _uiState = MutableStateFlow(createEmptyUiState())
   val uiState = _uiState.asStateFlow()
 
-  val authService = AuthorizationService(context)
+  //val authService = AuthorizationService(context)
   var curAccessToken: String = ""
 
   var pagerScrollState: MutableStateFlow<PagerScrollState> = MutableStateFlow(PagerScrollState())
@@ -177,7 +177,7 @@ open class ModelManagerViewModel @Inject constructor(
 
   override fun onCleared() {
     super.onCleared()
-    authService.dispose()
+    //authService.dispose()
   }
 
   fun selectModel(model: Model) {
