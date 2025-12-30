@@ -1,5 +1,14 @@
 # SparkReader Development Documentation
 
+## CI/CD Production Release
+The production build workflow is triggered by pushing git tags that start with 'v'. Here are the commands needed:
+
+```bash
+git tag -a v1.0.0 -m "Release version 1.0.0"
+git push origin --tags
+```
+
+
 ## Current Book ID System
 
 ### Library Books (Project Gutenberg)
