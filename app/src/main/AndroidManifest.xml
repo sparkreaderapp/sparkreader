@@ -40,6 +40,7 @@ Changes relative to the original are documented in docs/upstream/google-ai-edge-
 <!--    <uses-permission android:name="android.permission.RECORD_AUDIO" />-->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" tools:node="remove"/>
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -96,6 +97,7 @@ Changes relative to the original are documented in docs/upstream/google-ai-edge-
             android:exported="false"
             tools:node="merge">
         </service>
+
 
         <!-- For Firebase Analytics. -->
 <!--        <receiver-->

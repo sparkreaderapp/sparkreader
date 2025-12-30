@@ -44,11 +44,11 @@ android {
     applicationId = "app.sparkreader"
     minSdk = 26
     targetSdk = 35
-    versionCode = 1
-    versionName = "1.0.4"
+    versionCode = 3
+    versionName = "1.0.5"
 
     // Needed for HuggingFace auth workflows.
-    manifestPlaceholders["appAuthRedirectScheme"] = "app.sparkreader.oauth"
+    //manifestPlaceholders["appAuthRedirectScheme"] = "app.sparkreader.oauth"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -128,7 +128,7 @@ dependencies {
   implementation(libs.camerax.camera2)
   implementation(libs.camerax.lifecycle)
   implementation(libs.camerax.view)
-  implementation(libs.openid.appauth)
+  // implementation(libs.openid.appauth)
   implementation(libs.androidx.splashscreen)
   implementation(libs.protobuf.javalite)
   implementation(libs.hilt.android)

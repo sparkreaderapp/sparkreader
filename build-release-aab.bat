@@ -14,13 +14,13 @@ set "PATH=%JAVA_HOME%\bin;%PATH%"
 echo Added JAVA_HOME\bin to PATH: %JAVA_HOME%\bin
 
 REM Clean the project first
-echo Cleaning project...
-call gradlew clean
-if %ERRORLEVEL% neq 0 (
-    echo Clean failed!
-    pause
-    exit /b 1
-)
+@REM echo Cleaning project...
+@REM call gradlew clean
+@REM if %ERRORLEVEL% neq 0 (
+@REM     echo Clean failed!
+@REM     pause
+@REM     exit /b 1
+@REM )
 
 REM Build the signed release AAB
 echo Building signed release AAB...
