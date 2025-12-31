@@ -96,8 +96,7 @@ fun HelpFeedbackScreen(
 • Contextual AI explanations (not just definitions) for dense, rare, ambiguous, or archaic vocabulary, jargon, and cultural references  
 • Ability to ask follow-up questions  
 • All this without leaving the app or interrupting your reading  
-• Advanced OCR for easy import of books  
-• A curated public domain book library  
+• SparkReader Library, a curated public domain book library  
 • All these features work fully offline, with no Internet connection required and no data ever leaving your device"""
     ),
     FaqItem(
