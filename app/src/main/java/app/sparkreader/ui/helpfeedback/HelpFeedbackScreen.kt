@@ -91,13 +91,7 @@ fun HelpFeedbackScreen(
   
     FaqItem(
       question = "What makes SparkReader different?",
-      answer = """SparkReader combines:
-
-• Contextual AI explanations (not just definitions) for dense, rare, ambiguous, or archaic vocabulary, jargon, and cultural references  
-• Ability to ask follow-up questions  
-• All this without leaving the app or interrupting your reading  
-• SparkReader Library, a curated public domain book library  
-• All these features work fully offline, with no Internet connection required and no data ever leaving your device"""
+      answer = ""
     ),
     FaqItem(
       question = "How do I configure or change the AI model?",
@@ -389,6 +383,40 @@ private fun ExpandableFaqCard(
               
               append(" and contribute to the project\n")
               append("• Join our community of contributors")
+            }
+            
+            ClickableText(
+              text = annotatedText,
+              style = MaterialTheme.typography.bodyMedium.copy(
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+              ),
+              onClick = { offset ->
+                val annotations = annotatedText.getStringAnnotations(tag = "URL", start = offset, end = offset)
+                if (annotations.isNotEmpty()) {
+                  val annotation = annotations.first()
+                  val intent = Intent(Intent.ACTION_VIEW, Uri.parse(annotation.item))
+                  context.startActivity(intent)
+                }
+              }
+            )
+          }
+          
+          faq.question == "What makes SparkReader different?" -> {
+            val annotatedText = buildAnnotatedString {
+              append("SparkReader combines:\n\n")
+              append("• Contextual AI explanations (not just definitions) for dense, rare, ambiguous, or archaic vocabulary, jargon, and cultural references\n")
+              append("• Ability to ask follow-up questions\n")
+              append("• All this without leaving the app or interrupting your reading\n")
+              append("• ")
+              
+              pushStringAnnotation(tag = "URL", annotation = "https://sparkreader.app/library")
+              withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
+                append("SparkReader Library")
+              }
+              pop()
+              
+              append(", a curated public domain book library\n")
+              append("• All these features work fully offline, with no Internet connection required and no data ever leaving your device")
             }
             
             ClickableText(
