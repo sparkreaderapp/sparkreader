@@ -26,14 +26,11 @@ package app.sparkreader.ui.navigation
 
 import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.EaseOutExpo
 import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -41,9 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.activity.compose.BackHandler
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -71,35 +66,27 @@ import app.sparkreader.ui.modelmanager.ModelManagerViewModel
 
 private const val TAG = "AGSparkReaderNavGraph"
 private const val ROUTE_NEW_HOME = "new_home"
-private const val ENTER_ANIMATION_DURATION_MS = 500
+private const val ROUTE_BOOK_DETAIL = "book_detail"
+private const val ROUTE_IMPORT_BOOK = "import_book"
+private const val ROUTE_HELP_FEEDBACK = "help_feedback"
+private const val ROUTE_ABOUT = "about"
+private const val ROUTE_SETTINGS = "settings"
+private const val ROUTE_CREATE_BOOK = "create_book"
+private const val ROUTE_DEMO = "demo"
+
+private const val ENTER_ANIMATION_DURATION_MS = 300
 private val ENTER_ANIMATION_EASING = EaseOutExpo
-private const val ENTER_ANIMATION_DELAY_MS = 100
-
-private const val EXIT_ANIMATION_DURATION_MS = 500
-private val EXIT_ANIMATION_EASING = EaseOutExpo
-
-private fun enterTween(): FiniteAnimationSpec<IntOffset> {
-  return tween(
-    ENTER_ANIMATION_DURATION_MS,
-    easing = ENTER_ANIMATION_EASING,
-    delayMillis = ENTER_ANIMATION_DELAY_MS,
-  )
-}
-
-private fun exitTween(): FiniteAnimationSpec<IntOffset> {
-  return tween(EXIT_ANIMATION_DURATION_MS, easing = EXIT_ANIMATION_EASING)
-}
 
 private fun AnimatedContentTransitionScope<*>.slideEnter(): EnterTransition {
   return slideIntoContainer(
-    animationSpec = enterTween(),
+    animationSpec = tween(ENTER_ANIMATION_DURATION_MS, easing = ENTER_ANIMATION_EASING),
     towards = AnimatedContentTransitionScope.SlideDirection.Left,
   )
 }
 
 private fun AnimatedContentTransitionScope<*>.slideExit(): ExitTransition {
   return slideOutOfContainer(
-    animationSpec = exitTween(),
+    animationSpec = tween(ENTER_ANIMATION_DURATION_MS, easing = ENTER_ANIMATION_EASING),
     towards = AnimatedContentTransitionScope.SlideDirection.Right,
   )
 }
@@ -112,18 +99,6 @@ fun SparkReaderNavHost(
   modelManagerViewModel: ModelManagerViewModel = hiltViewModel(),
 ) {
   val lifecycleOwner = LocalLifecycleOwner.current
-  var showBookDetail by remember { mutableStateOf(false) }
-  var showImportBook by remember { mutableStateOf(false) }
-  var importBookRefreshKey by remember { mutableStateOf(0) }
-  var showHelpFeedback by remember { mutableStateOf(false) }
-  var showAbout by remember { mutableStateOf(false) }
-  var showSettings by remember { mutableStateOf(false) }
-  var showCreateBook by remember { mutableStateOf(false) }
-  var showDemo by remember { mutableStateOf(false) }
-  var bookToEdit by remember { mutableStateOf<Book?>(null) }
-  var selectedBook by remember { mutableStateOf<Book?>(null) }
-  var bookCreatedMessage by remember { mutableStateOf<String?>(null) }
-  var settingsCalledFrom by remember { mutableStateOf<String?>(null) }
 
   // Track whether app is in foreground.
   DisposableEffect(lifecycleOwner) {
@@ -148,247 +123,194 @@ fun SparkReaderNavHost(
     onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
   }
 
-  // Create the ViewModel outside AnimatedVisibility to ensure it persists
-  val newHomeViewModel: NewHomeViewModel = hiltViewModel()
-  
-  // Show new homescreen by default
-  AnimatedVisibility(
-    visible = !showBookDetail && !showImportBook && !showHelpFeedback && !showAbout && !showSettings && !showCreateBook && !showDemo,
-    enter = slideInHorizontally(initialOffsetX = { -it }),
-    exit = slideOutHorizontally(targetOffsetX = { -it }),
+  NavHost(
+    navController = navController,
+    startDestination = ROUTE_NEW_HOME,
+    enterTransition = { slideEnter() },
+    exitTransition = { slideExit() },
+    modifier = modifier,
   ) {
-    NewHomeScreen(
-      onRowClicked = { book ->
-        bookCreatedMessage = null  // Clear message when navigating away
-        selectedBook = book
-        showBookDetail = true
-      },
-      onImportBookClicked = {
-        bookCreatedMessage = null  // Clear message when navigating away
-        importBookRefreshKey++  // Increment key to force refresh
-        showImportBook = true
-      },
-      onCreateBookClicked = {
-        bookToEdit = null
-        bookCreatedMessage = null  // Clear any existing message
-        showCreateBook = true
-      },
-      onEditBookClicked = { book ->
-        bookToEdit = book
-        bookCreatedMessage = null  // Clear any existing message
-        showCreateBook = true
-      },
-      onHelpFeedbackClicked = {
-        bookCreatedMessage = null  // Clear message when navigating away
-        showHelpFeedback = true
-      },
-      onAboutClicked = {
-        bookCreatedMessage = null  // Clear message when navigating away
-        showAbout = true
-      },
-      onSettingsClicked = {
-        bookCreatedMessage = null  // Clear message when navigating away
-        settingsCalledFrom = "home"
-        showSettings = true
-      },
-      onDemoClicked = {
-        bookCreatedMessage = null  // Clear message when navigating away
-        showDemo = true
-      },
-      onOldHomescreenClicked = {
-        // Handle navigation to old homescreen if needed
-        // For now, we can leave this empty or navigate somewhere else
-      },
-      bookCreatedMessage = bookCreatedMessage,
-      onBookCreatedMessageShown = {
-        bookCreatedMessage = null
-      },
-      viewModel = newHomeViewModel
-    )
-  }
+    composable(route = ROUTE_NEW_HOME) {
+      val newHomeViewModel: NewHomeViewModel = hiltViewModel()
+      NewHomeScreen(
+        onRowClicked = { book ->
+          navController.navigate("$ROUTE_BOOK_DETAIL/${book.id}")
+        },
+        onImportBookClicked = {
+          navController.navigate(ROUTE_IMPORT_BOOK)
+        },
+        onCreateBookClicked = {
+          navController.navigate(ROUTE_CREATE_BOOK)
+        },
+        onEditBookClicked = { book ->
+          navController.navigate("$ROUTE_CREATE_BOOK/${book.id}")
+        },
+        onHelpFeedbackClicked = {
+          navController.navigate(ROUTE_HELP_FEEDBACK)
+        },
+        onAboutClicked = {
+          navController.navigate(ROUTE_ABOUT)
+        },
+        onSettingsClicked = {
+          navController.navigate(ROUTE_SETTINGS)
+        },
+        onDemoClicked = {
+          navController.navigate(ROUTE_DEMO)
+        },
+        onOldHomescreenClicked = {
+          // Handle navigation to old homescreen if needed
+        },
+        bookCreatedMessage = null,
+        onBookCreatedMessageShown = { },
+        viewModel = newHomeViewModel
+      )
+    }
 
-  // Show book detail screen
-  AnimatedVisibility(
-    visible = showBookDetail,
-    enter = slideInHorizontally(initialOffsetX = { it }),
-    exit = slideOutHorizontally(targetOffsetX = { it }),
-  ) {
-    selectedBook?.let { book ->
+    composable(
+      route = "$ROUTE_BOOK_DETAIL/{bookId}",
+      enterTransition = { slideEnter() },
+      exitTransition = { slideExit() }
+    ) { backStackEntry ->
+      val bookId = backStackEntry.arguments?.getString("bookId")?.toIntOrNull()
+      // TODO: Get book by ID from repository
+      // For now, create a placeholder book
+      val book = Book(
+        id = bookId ?: 0,
+        title = "Book Title",
+        author = "Author",
+        description = "Description"
+      )
+      
       BookDetailScreen(
         book = book,
         onNavigateUp = {
-          showBookDetail = false
-          selectedBook = null
+          navController.popBackStack()
         },
         onNavigateToModelManager = {
-          showBookDetail = false
-          settingsCalledFrom = "bookdetail"
-          showSettings = true
+          navController.navigate(ROUTE_SETTINGS)
         }
       )
     }
-  }
 
-  // Show import book screen
-  AnimatedVisibility(
-    visible = showImportBook,
-    enter = slideInHorizontally(initialOffsetX = { it }),
-    exit = slideOutHorizontally(targetOffsetX = { it }),
-  ) {
-    BackHandler(enabled = true) {
-      showImportBook = false
+    composable(
+      route = ROUTE_IMPORT_BOOK,
+      enterTransition = { slideEnter() },
+      exitTransition = { slideExit() }
+    ) {
+      ImportBookScreen(
+        onNavigateUp = {
+          navController.popBackStack()
+        },
+        onNavigateToSettings = {
+          navController.navigate(ROUTE_SETTINGS)
+        },
+        refreshKey = 0
+      )
     }
-    ImportBookScreen(
-      onNavigateUp = {
-        showImportBook = false
-      },
-      onNavigateToSettings = {
-        settingsCalledFrom = "importbook"
-        showSettings = true
-        // Don't hide import book screen so we can return to it
-      },
-      refreshKey = importBookRefreshKey
-    )
-  }
 
-  // Show help and feedback screen
-  AnimatedVisibility(
-    visible = showHelpFeedback,
-    enter = slideInHorizontally(initialOffsetX = { it }),
-    exit = slideOutHorizontally(targetOffsetX = { it }),
-  ) {
-    BackHandler(enabled = true) {
-      showHelpFeedback = false
-    }
-    HelpFeedbackScreen(
-      onNavigateUp = {
-        showHelpFeedback = false
-      },
-      onNavigateToSettings = {
-        showHelpFeedback = false
-        settingsCalledFrom = "helpfeedback"
-        showSettings = true
-      }
-    )
-  }
-
-  // Show about screen
-  AnimatedVisibility(
-    visible = showAbout,
-    enter = slideInHorizontally(initialOffsetX = { it }),
-    exit = slideOutHorizontally(targetOffsetX = { it }),
-  ) {
-    BackHandler(enabled = true) {
-      showAbout = false
-    }
-    AboutScreen(
-      onNavigateUp = {
-        showAbout = false
-      }
-    )
-  }
-
-  // Show settings screen
-  AnimatedVisibility(
-    visible = showSettings,
-    enter = slideInHorizontally(initialOffsetX = { it }),
-    exit = slideOutHorizontally(targetOffsetX = { it }),
-  ) {
-    SettingsScreen(
-      onNavigateBack = {
-        showSettings = false
-        
-        // Navigate back to where settings was called from
-        when (settingsCalledFrom) {
-          "bookdetail" -> {
-            showBookDetail = true
-          }
-          "importbook" -> {
-            // Import book screen is still visible, just increment refresh key
-            importBookRefreshKey++
-          }
-          "helpfeedback" -> {
-            showHelpFeedback = true
-          }
-          "createbook" -> {
-            showCreateBook = true
-          }
-          "home", null -> {
-            // Default back to home (do nothing as home is default visible state)
-          }
+    composable(
+      route = ROUTE_HELP_FEEDBACK,
+      enterTransition = { slideEnter() },
+      exitTransition = { slideExit() }
+    ) {
+      HelpFeedbackScreen(
+        onNavigateUp = {
+          navController.popBackStack()
+        },
+        onNavigateToSettings = {
+          navController.navigate(ROUTE_SETTINGS)
         }
-        
-        // Clear the caller tracking
-        settingsCalledFrom = null
-      },
-      // Model manager is now integrated into settings
-      onThemeSelectionClicked = {
-        showSettings = false
-      },
-      onImportBookClicked = {
-        showSettings = false
-        settingsCalledFrom = null  // Clear caller tracking
-        importBookRefreshKey++  // Increment key to force refresh
-        showImportBook = true
-      },
-      fromImportBook = showImportBook
-    )
-  }
-
-  // Show create book screen
-  AnimatedVisibility(
-    visible = showCreateBook,
-    enter = slideInHorizontally(initialOffsetX = { it }),
-    exit = slideOutHorizontally(targetOffsetX = { it }),
-  ) {
-    CreateBookScreen(
-      onBackPressed = {
-        showCreateBook = false
-        bookToEdit = null
-      },
-      onBookCreated = { success ->
-        showCreateBook = false
-        if (success) {
-          bookCreatedMessage = if (bookToEdit != null) "Book updated successfully!" else "Book created successfully!"
-        }
-        bookToEdit = null
-      },
-      bookToEdit = bookToEdit,
-      onNavigateToModelManager = {
-        showCreateBook = false
-        settingsCalledFrom = "createbook"
-        showSettings = true
-      }
-    )
-  }
-
-  // Show demo screen
-  AnimatedVisibility(
-    visible = showDemo,
-    enter = slideInHorizontally(initialOffsetX = { it }),
-    exit = slideOutHorizontally(targetOffsetX = { it }),
-  ) {
-    BackHandler(enabled = true) {
-      showDemo = false
+      )
     }
-    DemoScreen(
-      onBackClicked = {
-        showDemo = false
-      }
-    )
-  }
 
+    composable(
+      route = ROUTE_ABOUT,
+      enterTransition = { slideEnter() },
+      exitTransition = { slideExit() }
+    ) {
+      AboutScreen(
+        onNavigateUp = {
+          navController.popBackStack()
+        }
+      )
+    }
 
-  NavHost(
-    navController = navController,
-    // Default to open new home screen.
-    startDestination = ROUTE_NEW_HOME,
-    enterTransition = { EnterTransition.None },
-    exitTransition = { ExitTransition.None },
-    modifier = modifier.zIndex(1f),
-  ) {
-    // New home screen route
-    composable(route = ROUTE_NEW_HOME) { Text("") }
+    composable(
+      route = ROUTE_SETTINGS,
+      enterTransition = { slideEnter() },
+      exitTransition = { slideExit() }
+    ) {
+      SettingsScreen(
+        onNavigateBack = {
+          navController.popBackStack()
+        },
+        onThemeSelectionClicked = {
+          navController.popBackStack()
+        },
+        onImportBookClicked = {
+          navController.navigate(ROUTE_IMPORT_BOOK)
+        },
+        fromImportBook = false
+      )
+    }
+
+    composable(
+      route = ROUTE_CREATE_BOOK,
+      enterTransition = { slideEnter() },
+      exitTransition = { slideExit() }
+    ) {
+      CreateBookScreen(
+        onBackPressed = {
+          navController.popBackStack()
+        },
+        onBookCreated = { success ->
+          if (success) {
+            navController.popBackStack()
+          }
+        },
+        bookToEdit = null,
+        onNavigateToModelManager = {
+          navController.navigate(ROUTE_SETTINGS)
+        }
+      )
+    }
+
+    composable(
+      route = "$ROUTE_CREATE_BOOK/{bookId}",
+      enterTransition = { slideEnter() },
+      exitTransition = { slideExit() }
+    ) { backStackEntry ->
+      val bookId = backStackEntry.arguments?.getString("bookId")?.toIntOrNull()
+      // TODO: Get book by ID from repository for editing
+      val bookToEdit = null // Placeholder
+      
+      CreateBookScreen(
+        onBackPressed = {
+          navController.popBackStack()
+        },
+        onBookCreated = { success ->
+          if (success) {
+            navController.popBackStack()
+          }
+        },
+        bookToEdit = bookToEdit,
+        onNavigateToModelManager = {
+          navController.navigate(ROUTE_SETTINGS)
+        }
+      )
+    }
+
+    composable(
+      route = ROUTE_DEMO,
+      enterTransition = { slideEnter() },
+      exitTransition = { slideExit() }
+    ) {
+      DemoScreen(
+        onBackClicked = {
+          navController.popBackStack()
+        }
+      )
+    }
   }
 
   // Handle incoming intents for deep links and navigation extras
@@ -402,11 +324,8 @@ fun SparkReaderNavHost(
     intent.removeExtra("navigate_to")
     
     // Navigate to settings (where model manager is now integrated)
-    if (!showSettings) {
-      Log.d(TAG, "Navigating to settings from notification")
-      settingsCalledFrom = "notification"
-      showSettings = true
-    }
+    Log.d(TAG, "Navigating to settings from notification")
+    navController.navigate(ROUTE_SETTINGS)
   } else {
     // Handle deep links
     val data = intent?.data
@@ -416,11 +335,8 @@ fun SparkReaderNavHost(
       
       if (data.toString() == "app.sparkreader://modelmanager") {
         // Navigate to settings (where model manager is now integrated)
-        if (!showSettings) {
-          Log.d(TAG, "Navigating to settings from deep link")
-          settingsCalledFrom = "deeplink"
-          showSettings = true
-        }
+        Log.d(TAG, "Navigating to settings from deep link")
+        navController.navigate(ROUTE_SETTINGS)
       } else if (data.toString().startsWith("app.sparkreader://model/")) {
         val modelName = data.pathSegments.last()
         // Deep link model handling removed - no task screens available
