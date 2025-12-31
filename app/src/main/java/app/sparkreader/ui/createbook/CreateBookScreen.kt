@@ -93,14 +93,8 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -737,11 +731,7 @@ fun CreateBookScreen(
                 .imePadding() // Add IME padding to adjust for keyboard
         ) {
             // Book metadata fields - hide when keyboard is visible AND in edit mode
-            AnimatedVisibility(
-                visible = !(isEditMode && isKeyboardVisible),
-                enter = fadeIn() + scaleIn(),
-                exit = fadeOut() + scaleOut()
-            ) {
+            if (!(isEditMode && isKeyboardVisible)) {
                 Column {
                     OutlinedTextField(
                         value = title,
@@ -783,19 +773,8 @@ fun CreateBookScreen(
                         .fillMaxSize()
                         .padding(16.dp)
                 ) {
-                    // Edit mode - show text field with animation
-                    androidx.compose.animation.AnimatedVisibility(
-                        visible = isEditMode,
-                        enter = fadeIn(animationSpec = tween(300)) + scaleIn(
-                            initialScale = 0.8f,
-                            animationSpec = tween(300)
-                        ),
-                        exit = fadeOut(animationSpec = tween(200)) + scaleOut(
-                            targetScale = 0.8f,
-                            animationSpec = tween(200)
-                        ),
-                        modifier = Modifier.fillMaxSize()
-                    ) {
+                    // Edit mode - show text field
+                    if (isEditMode) {
                         TextField(
                             value = editingContent,
                             onValueChange = { 
@@ -815,21 +794,10 @@ fun CreateBookScreen(
                         )
                     }
                     
-                    // Empty page icons with animation - hide when streaming has text or when processing starts
+                    // Empty page icons - hide when streaming has text or when processing starts
                     val streamingState = ocrState as? OcrState.Streaming
                     val hasStreamingText = streamingState != null && streamingState.text.isNotBlank()
-                    androidx.compose.animation.AnimatedVisibility(
-                        visible = !isEditMode && currentPage.content.isBlank() && ocrState is OcrState.Idle && !hasStreamingText,
-                        enter = fadeIn(animationSpec = tween(300)) + scaleIn(
-                            initialScale = 0.8f,
-                            animationSpec = tween(300)
-                        ),
-                        exit = fadeOut(animationSpec = tween(200)) + scaleOut(
-                            targetScale = 0.8f,
-                            animationSpec = tween(200)
-                        ),
-                        modifier = Modifier.fillMaxSize()
-                    ) {
+                    if (!isEditMode && currentPage.content.isBlank() && ocrState is OcrState.Idle && !hasStreamingText) {
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -967,13 +935,8 @@ fun CreateBookScreen(
                     }
                     
                     
-                    // Page content with animation - show during streaming too
-                    androidx.compose.animation.AnimatedVisibility(
-                        visible = !isEditMode && (currentPage.content.isNotBlank() || ocrState is OcrState.Streaming),
-                        enter = fadeIn(animationSpec = tween(300)),
-                        exit = fadeOut(animationSpec = tween(200)),
-                        modifier = Modifier.fillMaxSize()
-                    ) {
+                    // Page content - show during streaming too
+                    if (!isEditMode && (currentPage.content.isNotBlank() || ocrState is OcrState.Streaming)) {
                         // Use streaming text if available, otherwise use saved content
                         val displayText = when (val state = ocrState) {
                             is OcrState.Streaming -> state.text
@@ -1008,12 +971,7 @@ fun CreateBookScreen(
                     }
                     
                     // OCR processing indicator - show on top of content
-                    androidx.compose.animation.AnimatedVisibility(
-                        visible = ocrState is OcrState.Processing || ocrState is OcrState.Streaming,
-                        enter = fadeIn(animationSpec = tween(300)),
-                        exit = fadeOut(animationSpec = tween(200)),
-                        modifier = Modifier.align(Alignment.Center)
-                    ) {
+                    if (ocrState is OcrState.Processing || ocrState is OcrState.Streaming) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -1070,13 +1028,8 @@ fun CreateBookScreen(
                         }
                     }
                     
-                    // Save/Cancel buttons when in edit mode with animation
-                    androidx.compose.animation.AnimatedVisibility(
-                        visible = isEditMode,
-                        enter = fadeIn(animationSpec = tween(300)),
-                        exit = fadeOut(animationSpec = tween(200)),
-                        modifier = Modifier.align(Alignment.BottomEnd)
-                    ) {
+                    // Save/Cancel buttons when in edit mode
+                    if (isEditMode) {
                         Row(
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
@@ -1112,11 +1065,7 @@ fun CreateBookScreen(
             Spacer(modifier = Modifier.height(16.dp))
             
             // Navigation and page management row - hide when keyboard is visible AND in edit mode
-            AnimatedVisibility(
-                visible = !(isEditMode && isKeyboardVisible),
-                enter = fadeIn() + scaleIn(),
-                exit = fadeOut() + scaleOut()
-            ) {
+            if (!(isEditMode && isKeyboardVisible)) {
                 Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
@@ -1282,7 +1231,6 @@ fun CreateBookScreen(
                 ) {
                     Icon(Icons.Default.ArrowForwardIos, contentDescription = "Next")
                 }
-            }
             }
         }
     }

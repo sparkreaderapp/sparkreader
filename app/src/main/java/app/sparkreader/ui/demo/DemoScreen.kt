@@ -18,11 +18,8 @@ package app.sparkreader.ui.demo
 import app.sparkreader.R
 import android.text.Html
 import android.content.Context
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -258,17 +255,7 @@ fun DemoScreen(
           }
         }
         
-        AnimatedVisibility(
-          visible = !isTransitioning,
-          enter = slideInHorizontally(
-            initialOffsetX = { if (animationDirection == "forward") it else -it }, // Enter from right for forward, left for backward
-            animationSpec = tween(300)
-          ),
-          exit = slideOutHorizontally(
-            targetOffsetX = { if (animationDirection == "forward") -it else it }, // Exit to left for forward, right for backward
-            animationSpec = tween(300)
-          )
-        ) {
+        if (!isTransitioning) {
           Box {
             when (step.type) {
               "ebook-reader" -> {
@@ -307,7 +294,6 @@ fun DemoScreen(
                 )
               }
             }
-            
           }
         }
       }
