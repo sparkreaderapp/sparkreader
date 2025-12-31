@@ -122,7 +122,6 @@ fun SparkReaderNavHost(
   var showDemo by remember { mutableStateOf(false) }
   var bookToEdit by remember { mutableStateOf<Book?>(null) }
   var selectedBook by remember { mutableStateOf<Book?>(null) }
-  var isNavigatingForward by remember { mutableStateOf(true) }
   var bookCreatedMessage by remember { mutableStateOf<String?>(null) }
   var settingsCalledFrom by remember { mutableStateOf<String?>(null) }
 
@@ -160,7 +159,6 @@ fun SparkReaderNavHost(
   ) {
     NewHomeScreen(
       onRowClicked = { book ->
-        isNavigatingForward = true
         bookCreatedMessage = null  // Clear message when navigating away
         selectedBook = book
         showBookDetail = true
@@ -171,13 +169,11 @@ fun SparkReaderNavHost(
         showImportBook = true
       },
       onCreateBookClicked = {
-        isNavigatingForward = true
         bookToEdit = null
         bookCreatedMessage = null  // Clear any existing message
         showCreateBook = true
       },
       onEditBookClicked = { book ->
-        isNavigatingForward = true
         bookToEdit = book
         bookCreatedMessage = null  // Clear any existing message
         showCreateBook = true
@@ -191,7 +187,6 @@ fun SparkReaderNavHost(
         showAbout = true
       },
       onSettingsClicked = {
-        isNavigatingForward = true
         bookCreatedMessage = null  // Clear message when navigating away
         settingsCalledFrom = "home"
         showSettings = true
@@ -215,19 +210,17 @@ fun SparkReaderNavHost(
   // Show book detail screen
   AnimatedVisibility(
     visible = showBookDetail,
-    enter = if (isNavigatingForward) slideInHorizontally(initialOffsetX = { it }) else slideInHorizontally(initialOffsetX = { -it }),
-    exit = slideOutHorizontally(targetOffsetX = { -it }),
+    enter = slideInHorizontally(initialOffsetX = { it }),
+    exit = slideOutHorizontally(targetOffsetX = { it }),
   ) {
     selectedBook?.let { book ->
       BookDetailScreen(
         book = book,
         onNavigateUp = {
-          isNavigatingForward = false
           showBookDetail = false
           selectedBook = null
         },
         onNavigateToModelManager = {
-          isNavigatingForward = true
           showBookDetail = false
           settingsCalledFrom = "bookdetail"
           showSettings = true
@@ -250,7 +243,6 @@ fun SparkReaderNavHost(
         showImportBook = false
       },
       onNavigateToSettings = {
-        isNavigatingForward = true
         settingsCalledFrom = "importbook"
         showSettings = true
         // Don't hide import book screen so we can return to it
@@ -273,7 +265,6 @@ fun SparkReaderNavHost(
         showHelpFeedback = false
       },
       onNavigateToSettings = {
-        isNavigatingForward = true
         showHelpFeedback = false
         settingsCalledFrom = "helpfeedback"
         showSettings = true
@@ -300,12 +291,11 @@ fun SparkReaderNavHost(
   // Show settings screen
   AnimatedVisibility(
     visible = showSettings,
-    enter = if (isNavigatingForward) slideInHorizontally(initialOffsetX = { it }) else slideInHorizontally(initialOffsetX = { -it }),
-    exit = if (isNavigatingForward) slideOutHorizontally(targetOffsetX = { -it }) else slideOutHorizontally(targetOffsetX = { it }),
+    enter = slideInHorizontally(initialOffsetX = { it }),
+    exit = slideOutHorizontally(targetOffsetX = { it }),
   ) {
     SettingsScreen(
       onNavigateBack = {
-        isNavigatingForward = false
         showSettings = false
         
         // Navigate back to where settings was called from
@@ -336,7 +326,6 @@ fun SparkReaderNavHost(
         showSettings = false
       },
       onImportBookClicked = {
-        isNavigatingForward = true
         showSettings = false
         settingsCalledFrom = null  // Clear caller tracking
         importBookRefreshKey++  // Increment key to force refresh
@@ -349,17 +338,15 @@ fun SparkReaderNavHost(
   // Show create book screen
   AnimatedVisibility(
     visible = showCreateBook,
-    enter = if (isNavigatingForward) slideInHorizontally(initialOffsetX = { it }) else slideInHorizontally(initialOffsetX = { -it }),
-    exit = if (isNavigatingForward) slideOutHorizontally(targetOffsetX = { -it }) else slideOutHorizontally(targetOffsetX = { it }),
+    enter = slideInHorizontally(initialOffsetX = { it }),
+    exit = slideOutHorizontally(targetOffsetX = { it }),
   ) {
     CreateBookScreen(
       onBackPressed = {
-        isNavigatingForward = false
         showCreateBook = false
         bookToEdit = null
       },
       onBookCreated = { success ->
-        isNavigatingForward = false
         showCreateBook = false
         if (success) {
           bookCreatedMessage = if (bookToEdit != null) "Book updated successfully!" else "Book created successfully!"
@@ -368,7 +355,6 @@ fun SparkReaderNavHost(
       },
       bookToEdit = bookToEdit,
       onNavigateToModelManager = {
-        isNavigatingForward = true
         showCreateBook = false
         settingsCalledFrom = "createbook"
         showSettings = true
@@ -418,7 +404,6 @@ fun SparkReaderNavHost(
     // Navigate to settings (where model manager is now integrated)
     if (!showSettings) {
       Log.d(TAG, "Navigating to settings from notification")
-      isNavigatingForward = true
       settingsCalledFrom = "notification"
       showSettings = true
     }
@@ -433,7 +418,6 @@ fun SparkReaderNavHost(
         // Navigate to settings (where model manager is now integrated)
         if (!showSettings) {
           Log.d(TAG, "Navigating to settings from deep link")
-          isNavigatingForward = true
           settingsCalledFrom = "deeplink"
           showSettings = true
         }
