@@ -74,7 +74,7 @@ private const val ROUTE_SETTINGS = "settings"
 private const val ROUTE_CREATE_BOOK = "create_book"
 private const val ROUTE_DEMO = "demo"
 
-private const val ENTER_ANIMATION_DURATION_MS = 300
+private const val ENTER_ANIMATION_DURATION_MS = 500
 private val ENTER_ANIMATION_EASING = EaseOutExpo
 
 private fun AnimatedContentTransitionScope<*>.slideEnter(): EnterTransition {
