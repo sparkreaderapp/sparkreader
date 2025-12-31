@@ -181,9 +181,7 @@ Our selection covers a wide range of disciplines, including philosophy, religion
       items(faqItems) { faq ->
         ExpandableFaqCard(
           faq = faq,
-          onNavigateToSettings = if (faq.question.contains("model", ignoreCase = true)) {
-            onNavigateToSettings
-          } else null
+          onNavigateToSettings = onNavigateToSettings
         )
       }
       
