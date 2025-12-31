@@ -311,7 +311,7 @@ private fun ExpandableFaqCard(
               pop()
               
               append(")\n")
-              append("2. Configure SparkReader library (optional, go to ")
+              append("2. Configure SparkReader library (go to ")
               
               pushStringAnnotation(tag = "SETTINGS", annotation = "settings")
               withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
@@ -328,10 +328,10 @@ private fun ExpandableFaqCard(
                 append("(coming soon)")
               }
               
-              append("\n   • Take a picture of book pages (OCR) ")
+              append("\n   • Create your own books, by taking pictures (OCR) and editing page texts ")
               
               withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)) {
-                append("(coming soon)")
+                append("(coming later)")
               }
               
               append("\n\n4. Once a book is added to your library, tap on it to start reading!")
