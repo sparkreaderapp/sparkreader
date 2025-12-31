@@ -86,16 +86,7 @@ fun HelpFeedbackScreen(
   val faqItems = listOf(
     FaqItem(
       question = "Getting Started",
-      answer = """To get started with SparkReader:
-
-1. Configure a local LLM (go to Settings)
-2. Configure SparkReader library (go to Settings)
-3. Add books into your library:
-   • Import from the SparkReader starter library
-   • Take a picture of book pages (OCR) (coming soon)
-   • Import EPUB ebooks and webpages (coming soon)
-   
-4. Once a book is added to your library, tap on it to start reading, getting explanations, and chatting about the book!"""
+      answer = ""
     ),
   
     FaqItem(
