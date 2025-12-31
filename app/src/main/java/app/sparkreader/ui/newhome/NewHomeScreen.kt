@@ -337,10 +337,9 @@ fun NewHomeScreen(
           )
 
           ImportOptionButton(
-            drawableRes = if (isDarkTheme()) R.drawable.logo_create_dark else R.drawable.logo_create_light,
+            icon = Icons.Default.Edit,
             label = "Create\nNew",
             optionType = ImportOptionType.CREATE_NEW,
-            recolor = false,
             enabled = false,
             onClick = {
               showImportBottomSheet = false
