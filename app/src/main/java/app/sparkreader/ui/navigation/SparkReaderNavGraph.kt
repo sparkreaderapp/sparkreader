@@ -112,7 +112,6 @@ fun SparkReaderNavHost(
   modelManagerViewModel: ModelManagerViewModel = hiltViewModel(),
 ) {
   val lifecycleOwner = LocalLifecycleOwner.current
-  var showModelManager by remember { mutableStateOf(false) }
   var showBookDetail by remember { mutableStateOf(false) }
   var showImportBook by remember { mutableStateOf(false) }
   var importBookRefreshKey by remember { mutableStateOf(0) }
@@ -123,8 +122,6 @@ fun SparkReaderNavHost(
   var showDemo by remember { mutableStateOf(false) }
   var bookToEdit by remember { mutableStateOf<Book?>(null) }
   var selectedBook by remember { mutableStateOf<Book?>(null) }
-  var pickedTask by remember { mutableStateOf<Task?>(null) }
-  var modelManagerSource by remember { mutableStateOf<String?>(null) }
   var isNavigatingForward by remember { mutableStateOf(true) }
   var bookCreatedMessage by remember { mutableStateOf<String?>(null) }
 
@@ -156,7 +153,7 @@ fun SparkReaderNavHost(
   
   // Show new homescreen by default
   AnimatedVisibility(
-    visible = !showModelManager && !showBookDetail && !showImportBook && !showHelpFeedback && !showAbout && !showSettings && !showCreateBook && !showDemo,
+    visible = !showBookDetail && !showImportBook && !showHelpFeedback && !showAbout && !showSettings && !showCreateBook && !showDemo,
     enter = slideInHorizontally(initialOffsetX = { -it }),
     exit = slideOutHorizontally(targetOffsetX = { -it }),
   ) {
@@ -230,9 +227,7 @@ fun SparkReaderNavHost(
         onNavigateToModelManager = {
           isNavigatingForward = true
           showBookDetail = false
-          pickedTask = TASK_LLM_ASK_IMAGE
-          modelManagerSource = "book_detail"
-          showModelManager = true
+          showSettings = true
         }
       )
     }
@@ -313,13 +308,7 @@ fun SparkReaderNavHost(
           importBookRefreshKey++
         }
       },
-      onModelManagerClicked = {
-        isNavigatingForward = true
-        pickedTask = TASK_LLM_ASK_IMAGE
-        modelManagerSource = "settings"
-        showModelManager = true
-        showSettings = false
-      },
+      // Model manager is now integrated into settings
       onThemeSelectionClicked = {
         showSettings = false
       },
@@ -357,9 +346,7 @@ fun SparkReaderNavHost(
       onNavigateToModelManager = {
         isNavigatingForward = true
         showCreateBook = false
-        pickedTask = TASK_LLM_ASK_IMAGE
-        modelManagerSource = "create_book"
-        showModelManager = true
+        showSettings = true
       }
     )
   }
@@ -380,47 +367,6 @@ fun SparkReaderNavHost(
     )
   }
 
-  // Model manager.
-  AnimatedVisibility(
-    visible = showModelManager,
-    enter = if (isNavigatingForward) slideInHorizontally(initialOffsetX = { it }) else slideInHorizontally(initialOffsetX = { -it }),
-    exit = if (isNavigatingForward) slideOutHorizontally(targetOffsetX = { -it }) else slideOutHorizontally(targetOffsetX = { it }),
-  ) {
-    val curPickedTask = pickedTask
-    if (curPickedTask != null) {
-      ModelManager(
-        viewModel = modelManagerViewModel,
-        task = curPickedTask,
-        onModelClicked = { model ->
-          // Model click handling removed - no task screens available
-        },
-        navigateUp = { 
-          isNavigatingForward = false
-          showModelManager = false
-          modelManagerSource?.let { source ->
-            when (source) {
-              "settings" -> {
-                showSettings = true
-              }
-              "book_detail" -> {
-                showBookDetail = true
-              }
-              "create_book" -> {
-                showCreateBook = true
-              }
-              "notification", "deeplink" -> {
-                // When coming from notification or deep link, go to new homescreen
-              }
-              else -> {
-                // Default to new homescreen
-              }
-            }
-            modelManagerSource = null
-          }
-        },
-      )
-    }
-  }
 
   NavHost(
     navController = navController,
@@ -444,13 +390,11 @@ fun SparkReaderNavHost(
     // Clear the extra to prevent re-navigation
     intent.removeExtra("navigate_to")
     
-    // Navigate to model manager
-    if (!showModelManager) {
-      Log.d(TAG, "Navigating to model manager from notification")
+    // Navigate to settings (where model manager is now integrated)
+    if (!showSettings) {
+      Log.d(TAG, "Navigating to settings from notification")
       isNavigatingForward = true
-      pickedTask = TASK_LLM_ASK_IMAGE
-      modelManagerSource = "notification"
-      showModelManager = true
+      showSettings = true
     }
   } else {
     // Handle deep links
@@ -460,13 +404,11 @@ fun SparkReaderNavHost(
       Log.d(TAG, "navigation link clicked: $data")
       
       if (data.toString() == "app.sparkreader://modelmanager") {
-        // Navigate to model manager
-        if (!showModelManager) {
-          Log.d(TAG, "Navigating to model manager from deep link")
+        // Navigate to settings (where model manager is now integrated)
+        if (!showSettings) {
+          Log.d(TAG, "Navigating to settings from deep link")
           isNavigatingForward = true
-          pickedTask = TASK_LLM_ASK_IMAGE
-          modelManagerSource = "deeplink"
-          showModelManager = true
+          showSettings = true
         }
       } else if (data.toString().startsWith("app.sparkreader://model/")) {
         val modelName = data.pathSegments.last()

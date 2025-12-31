@@ -952,7 +952,7 @@ fun CreateBookScreen(
                                             contentColor = MaterialTheme.colorScheme.onError
                                         )
                                     ) {
-                                        Text("Go to Model Manager")
+                                        Text("Go to Settings")
                                     }
                                 }
                             } else if (selectedModelName.isNullOrEmpty()) {

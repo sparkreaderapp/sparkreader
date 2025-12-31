@@ -37,6 +37,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Storage
+import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Download
@@ -77,6 +78,19 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.LaunchedEffect
+import app.sparkreader.data.TASK_LLM_ASK_IMAGE
+import app.sparkreader.data.ModelDownloadStatus
+import app.sparkreader.ui.common.humanReadableSize
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.shape.RoundedCornerShape
+//import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.platform.LocalUriHandler
 
 private val THEME_OPTIONS = listOf(Theme.THEME_AUTO, Theme.THEME_LIGHT, Theme.THEME_DARK)
 
@@ -84,7 +98,6 @@ private val THEME_OPTIONS = listOf(Theme.THEME_AUTO, Theme.THEME_LIGHT, Theme.TH
 @Composable
 fun SettingsScreen(
   onNavigateBack: () -> Unit,
-  onModelManagerClicked: () -> Unit,
   onThemeSelectionClicked: () -> Unit,
   onImportBookClicked: () -> Unit,
   modifier: Modifier = Modifier,
@@ -97,6 +110,9 @@ fun SettingsScreen(
   var showDeleteConfirmation by remember { mutableStateOf(false) }
   val modelManagerUiState by modelManagerViewModel.uiState.collectAsState()
   val selectedModelName = modelManagerUiState.selectedModelName
+  var showModelDeleteConfirmation by remember { mutableStateOf(false) }
+  var modelToDelete by remember { mutableStateOf<app.sparkreader.data.Model?>(null) }
+  var expandedModelManager by remember { mutableStateOf(false) }
   
   // Set up notification permission launcher
   val notificationPermissionLauncher = rememberLauncherForActivityResult(
@@ -162,15 +178,16 @@ fun SettingsScreen(
       }
       
       item {
-        SettingsItem(
-          icon = Icons.Default.Storage,
-          title = "Model Manager",
-          subtitle = if (selectedModelName.isNullOrEmpty()) {
-            "No default model"
-          } else {
-            "Default: $selectedModelName"
-          },
-          onClick = onModelManagerClicked
+        ModelManagerSection(
+          modelManagerViewModel = modelManagerViewModel,
+          modelManagerUiState = modelManagerUiState,
+          selectedModelName = selectedModelName,
+          expanded = expandedModelManager,
+          onExpandedChange = { expandedModelManager = it },
+          onModelDeleteRequested = { model ->
+            modelToDelete = model
+            showModelDeleteConfirmation = true
+          }
         )
       }
       
@@ -232,6 +249,22 @@ fun SettingsScreen(
       },
       onDismiss = {
         showDeleteConfirmation = false
+      }
+    )
+  }
+  
+  // Model delete confirmation dialog
+  if (showModelDeleteConfirmation && modelToDelete != null) {
+    ConfirmDeleteModelDialog(
+      modelName = modelToDelete!!.name,
+      onConfirm = {
+        modelManagerViewModel.deleteModel(TASK_LLM_ASK_IMAGE, modelToDelete!!)
+        showModelDeleteConfirmation = false
+        modelToDelete = null
+      },
+      onDismiss = {
+        showModelDeleteConfirmation = false
+        modelToDelete = null
       }
     )
   }
@@ -564,6 +597,397 @@ private fun ConfirmDeleteLibraryDialog(
     title = { Text("Delete Library?") },
     text = {
       Text("This will delete the downloaded library and all its books. You can download it again later from this settings page.")
+    },
+    confirmButton = {
+      Button(
+        onClick = onConfirm,
+        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+          containerColor = MaterialTheme.colorScheme.error
+        )
+      ) {
+        Text("Delete")
+      }
+    },
+    dismissButton = {
+      TextButton(onClick = onDismiss) {
+        Text("Cancel")
+      }
+    }
+  )
+}
+
+@Composable
+private fun ModelManagerSection(
+  modelManagerViewModel: ModelManagerViewModel,
+  modelManagerUiState: ModelManagerUiState,
+  selectedModelName: String?,
+  expanded: Boolean,
+  onExpandedChange: (Boolean) -> Unit,
+  onModelDeleteRequested: (app.sparkreader.data.Model) -> Unit,
+  modifier: Modifier = Modifier,
+) {
+  val task = TASK_LLM_ASK_IMAGE
+  val models = task.models.filter { !it.imported }
+  val importedModels = task.models.filter { it.imported }
+  
+  Card(
+    modifier = modifier
+      .fillMaxWidth()
+      .clickable { onExpandedChange(!expanded) },
+    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+  ) {
+    Column(
+      modifier = Modifier
+        .fillMaxWidth()
+        .padding(16.dp)
+    ) {
+      // Header row
+      Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+      ) {
+        Icon(
+          imageVector = Icons.Default.SmartToy,
+          contentDescription = null,
+          tint = MaterialTheme.colorScheme.primary,
+          modifier = Modifier.size(24.dp)
+        )
+        
+        Column(
+          modifier = Modifier.weight(1f),
+          verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+          Text(
+            text = "AI Models",
+            style = MaterialTheme.typography.titleMedium.copy(
+              fontWeight = FontWeight.Medium
+            )
+          )
+          Text(
+            text = if (selectedModelName.isNullOrEmpty()) {
+              "No default model selected"
+            } else {
+              "Default: $selectedModelName"
+            },
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+          )
+        }
+        
+        Icon(
+          imageVector = if (expanded) Icons.AutoMirrored.Filled.ArrowBack else Icons.AutoMirrored.Filled.ArrowForward,
+          contentDescription = if (expanded) "Collapse" else "Expand",
+          tint = MaterialTheme.colorScheme.onSurfaceVariant,
+          modifier = Modifier.size(20.dp)
+        )
+      }
+      
+      // Expanded content
+      if (expanded) {
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // Models list
+        models.forEach { model ->
+          ModelItem(
+            model = model,
+            modelManagerViewModel = modelManagerViewModel,
+            modelManagerUiState = modelManagerUiState,
+            selectedModelName = selectedModelName,
+            onDeleteRequested = onModelDeleteRequested,
+            modifier = Modifier.padding(vertical = 4.dp)
+          )
+        }
+        
+        // Imported models section
+        if (importedModels.isNotEmpty()) {
+          Spacer(modifier = Modifier.height(16.dp))
+          Text(
+            text = "Imported models",
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+            modifier = Modifier.padding(bottom = 8.dp)
+          )
+          
+          importedModels.forEach { model ->
+            ModelItem(
+              model = model,
+              modelManagerViewModel = modelManagerViewModel,
+              modelManagerUiState = modelManagerUiState,
+              selectedModelName = selectedModelName,
+              onDeleteRequested = onModelDeleteRequested,
+              modifier = Modifier.padding(vertical = 4.dp)
+            )
+          }
+        }
+      }
+    }
+  }
+}
+
+@Composable
+private fun ModelItem(
+  model: app.sparkreader.data.Model,
+  modelManagerViewModel: ModelManagerViewModel,
+  modelManagerUiState: ModelManagerUiState,
+  selectedModelName: String?,
+  onDeleteRequested: (app.sparkreader.data.Model) -> Unit,
+  modifier: Modifier = Modifier,
+) {
+  val downloadStatus = modelManagerUiState.modelDownloadStatus[model.name]
+  val isDownloaded = downloadStatus?.status == app.sparkreader.data.ModelDownloadStatusType.SUCCEEDED
+  val isDownloading = downloadStatus?.status == app.sparkreader.data.ModelDownloadStatusType.IN_PROGRESS
+  val isConnecting = downloadStatus?.status == app.sparkreader.data.ModelDownloadStatusType.CONNECTING
+  val isFailed = downloadStatus?.status == app.sparkreader.data.ModelDownloadStatusType.FAILED
+  val isSelected = selectedModelName == model.name
+  val uriHandler = LocalUriHandler.current
+
+  Card(
+    modifier = modifier
+      .fillMaxWidth()
+      .clickable(enabled = isDownloaded && !isSelected) { 
+        if (isDownloaded && !isSelected) {
+          modelManagerViewModel.setSelectedModel(model.name)
+        }
+      },
+    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+    colors = CardDefaults.cardColors(
+      containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+    )
+  ) {
+    Column(
+      modifier = Modifier
+        .fillMaxWidth()
+        .padding(12.dp),
+      verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+      // Model name and link
+      Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+      ) {
+        Text(
+          text = model.name,
+          style = MaterialTheme.typography.titleSmall,
+          fontWeight = FontWeight.Medium,
+          maxLines = 1,
+          overflow = TextOverflow.Ellipsis,
+          modifier = Modifier.weight(1f)
+        )
+        
+        // Model link icon if available
+        if (model.modelLink.isNotEmpty()) {
+          IconButton(
+            onClick = { 
+              uriHandler.openUri(model.modelLink)
+            },
+            modifier = Modifier.size(28.dp)
+          ) {
+            Icon(
+              imageVector = Icons.Default.Language,
+              contentDescription = "Open model link",
+              tint = MaterialTheme.colorScheme.primary,
+              modifier = Modifier.size(16.dp)
+            )
+          }
+        }
+      }
+      
+      // Model size and action buttons row
+      Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+      ) {
+        Row(
+          horizontalArrangement = Arrangement.spacedBy(4.dp),
+          verticalAlignment = Alignment.CenterVertically
+        ) {
+          Text(
+            text = model.totalBytes.humanReadableSize(),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+          )
+          
+          // Action button (download or delete)
+          when {
+            isDownloaded -> {
+              IconButton(
+                onClick = { onDeleteRequested(model) },
+                modifier = Modifier.size(24.dp)
+              ) {
+                Icon(
+                  imageVector = Icons.Default.Delete,
+                  contentDescription = "Delete model",
+                  tint = MaterialTheme.colorScheme.error,
+                  modifier = Modifier.size(16.dp)
+                )
+              }
+            }
+            isConnecting -> {
+              Box(
+                modifier = Modifier.size(24.dp),
+                contentAlignment = Alignment.Center
+              ) {
+                CircularProgressIndicator(
+                  modifier = Modifier.size(16.dp),
+                  strokeWidth = 2.dp,
+                  color = MaterialTheme.colorScheme.primary
+                )
+              }
+            }
+            !isDownloading && !isFailed -> {
+              IconButton(
+                onClick = {
+                  modelManagerViewModel.startModelDownload(TASK_LLM_ASK_IMAGE, model)
+                },
+                modifier = Modifier.size(24.dp)
+              ) {
+                Icon(
+                  imageVector = Icons.Default.Download,
+                  contentDescription = "Download model",
+                  tint = MaterialTheme.colorScheme.primary,
+                  modifier = Modifier.size(16.dp)
+                )
+              }
+            }
+            isFailed -> {
+              IconButton(
+                onClick = {
+                  modelManagerViewModel.startModelDownload(TASK_LLM_ASK_IMAGE, model)
+                },
+                modifier = Modifier.size(24.dp)
+              ) {
+                Icon(
+                  imageVector = Icons.Default.Download,
+                  contentDescription = "Retry download",
+                  tint = MaterialTheme.colorScheme.error,
+                  modifier = Modifier.size(16.dp)
+                )
+              }
+            }
+          }
+        }
+        
+        // Default tag or Set as default button
+        if (isDownloaded) {
+          if (isSelected) {
+            // Default tag (filled)
+            Box(
+              modifier = Modifier
+                .background(
+                  color = MaterialTheme.colorScheme.primary,
+                  shape = RoundedCornerShape(8.dp)
+                )
+                .padding(horizontal = 8.dp, vertical = 2.dp)
+            ) {
+              Text(
+                text = "Default",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onPrimary,
+                fontWeight = FontWeight.Medium
+              )
+            }
+          } else {
+            // Set as default button (outlined)
+            Box(
+              modifier = Modifier
+                .clip(RoundedCornerShape(8.dp))
+                .border(
+                  width = 1.dp,
+                  color = MaterialTheme.colorScheme.primary,
+                  shape = RoundedCornerShape(8.dp)
+                )
+                .clickable { 
+                  modelManagerViewModel.setSelectedModel(model.name)
+                }
+                .padding(horizontal = 8.dp, vertical = 2.dp)
+            ) {
+              Text(
+                text = "Set default",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Medium
+              )
+            }
+          }
+        }
+      }
+      
+      // Error message when download fails
+      if (isFailed && !downloadStatus?.errorMessage.isNullOrEmpty()) {
+        Text(
+          text = "Error: ${downloadStatus?.errorMessage}",
+          style = MaterialTheme.typography.labelSmall,
+          color = MaterialTheme.colorScheme.error,
+          modifier = Modifier.padding(top = 4.dp)
+        )
+      }
+
+      // Progress bar when downloading or connecting
+      if (isDownloading || isConnecting) {
+        Column(
+          verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+          Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            verticalAlignment = Alignment.CenterVertically
+          ) {
+            val progress = if (downloadStatus?.totalBytes ?: 0 > 0) {
+              (downloadStatus?.receivedBytes ?: 0).toFloat() / downloadStatus!!.totalBytes.toFloat()
+            } else {
+              0f
+            }
+            
+            Column(
+              modifier = Modifier.weight(1f)
+            ) {
+              LinearProgressIndicator(
+                progress = { progress },
+                modifier = Modifier.fillMaxWidth(),
+              )
+              
+              if (downloadStatus?.totalBytes ?: 0 > 0) {
+                Text(
+                  text = "${(downloadStatus?.receivedBytes ?: 0).humanReadableSize()} / ${downloadStatus!!.totalBytes.humanReadableSize()}",
+                  style = MaterialTheme.typography.labelSmall,
+                  color = MaterialTheme.colorScheme.onSurfaceVariant,
+                  modifier = Modifier.padding(top = 2.dp)
+                )
+              }
+            }
+            
+            IconButton(
+              onClick = { 
+                modelManagerViewModel.cancelDownloadModel(TASK_LLM_ASK_IMAGE, model) 
+              },
+              modifier = Modifier.size(28.dp)
+            ) {
+              Icon(
+                imageVector = Icons.Default.Cancel,
+                contentDescription = "Cancel download",
+                tint = MaterialTheme.colorScheme.error,
+                modifier = Modifier.size(16.dp)
+              )
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@Composable
+private fun ConfirmDeleteModelDialog(
+  modelName: String,
+  onConfirm: () -> Unit,
+  onDismiss: () -> Unit
+) {
+  AlertDialog(
+    onDismissRequest = onDismiss,
+    title = { Text("Delete Model?") },
+    text = {
+      Text("Are you sure you want to delete \"$modelName\"? You can download it again later from this settings page.")
     },
     confirmButton = {
       Button(
