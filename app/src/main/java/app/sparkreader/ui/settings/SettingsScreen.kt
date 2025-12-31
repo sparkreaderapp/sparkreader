@@ -91,6 +91,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 //import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.platform.LocalUriHandler
+import app.sparkreader.ui.modelmanager.ModelManagerUiState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 
 private val THEME_OPTIONS = listOf(Theme.THEME_AUTO, Theme.THEME_LIGHT, Theme.THEME_DARK)
 
@@ -734,10 +737,10 @@ private fun ModelItem(
   modifier: Modifier = Modifier,
 ) {
   val downloadStatus = modelManagerUiState.modelDownloadStatus[model.name]
-  val isDownloaded = downloadStatus?.status == app.sparkreader.data.ModelDownloadStatusType.SUCCEEDED
-  val isDownloading = downloadStatus?.status == app.sparkreader.data.ModelDownloadStatusType.IN_PROGRESS
-  val isConnecting = downloadStatus?.status == app.sparkreader.data.ModelDownloadStatusType.CONNECTING
-  val isFailed = downloadStatus?.status == app.sparkreader.data.ModelDownloadStatusType.FAILED
+  val isDownloaded = downloadStatus?.status == ModelDownloadStatusType.SUCCEEDED
+  val isDownloading = downloadStatus?.status == ModelDownloadStatusType.IN_PROGRESS
+  val isConnecting = downloadStatus?.status == ModelDownloadStatusType.CONNECTING
+  val isFailed = downloadStatus?.status == ModelDownloadStatusType.FAILED
   val isSelected = selectedModelName == model.name
   val uriHandler = LocalUriHandler.current
 
@@ -914,9 +917,9 @@ private fun ModelItem(
       }
       
       // Error message when download fails
-      if (isFailed && !downloadStatus?.errorMessage.isNullOrEmpty()) {
+      if (isFailed && downloadStatus?.errorMessage?.isNotEmpty() == true) {
         Text(
-          text = "Error: ${downloadStatus?.errorMessage}",
+          text = "Error: ${downloadStatus.errorMessage}",
           style = MaterialTheme.typography.labelSmall,
           color = MaterialTheme.colorScheme.error,
           modifier = Modifier.padding(top = 4.dp)
@@ -933,7 +936,7 @@ private fun ModelItem(
             horizontalArrangement = Arrangement.spacedBy(2.dp),
             verticalAlignment = Alignment.CenterVertically
           ) {
-            val progress = if (downloadStatus?.totalBytes ?: 0 > 0) {
+            val progress = if ((downloadStatus?.totalBytes ?: 0) > 0) {
               (downloadStatus?.receivedBytes ?: 0).toFloat() / downloadStatus!!.totalBytes.toFloat()
             } else {
               0f
@@ -947,7 +950,7 @@ private fun ModelItem(
                 modifier = Modifier.fillMaxWidth(),
               )
               
-              if (downloadStatus?.totalBytes ?: 0 > 0) {
+              if ((downloadStatus?.totalBytes ?: 0) > 0) {
                 Text(
                   text = "${(downloadStatus?.receivedBytes ?: 0).humanReadableSize()} / ${downloadStatus!!.totalBytes.humanReadableSize()}",
                   style = MaterialTheme.typography.labelSmall,
