@@ -36,12 +36,16 @@ jobs:
         run: |
           ./gradlew assembleRelease
 
+      - name: Rename APK with version
+        run: |
+          mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/sparkreader-${{ github.ref_name }}.apk
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
           generate_release_notes: true
-          files: app/build/outputs/apk/release/app-release.apk
+          files: app/build/outputs/apk/release/sparkreader-${{ github.ref_name }}.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
