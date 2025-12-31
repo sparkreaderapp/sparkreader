@@ -1373,7 +1373,7 @@ fun CreateBookScreen(
 
         // Page input dialog
         if (showPageInputDialog) {
-            PageInputDialog(
+            PageInputDialogContent(
                 currentPage = currentPage.pageNumber,
                 totalPages = pages.size,
                 onPageSelected = { page ->
@@ -1394,7 +1394,7 @@ fun CreateBookScreen(
 
         // Back confirmation dialog
         if (showBackConfirmDialog) {
-            BackConfirmationDialog(
+            BackConfirmationDialogContent(
                 onAbortAndLeave = {
                     viewModel.confirmBackWithAbort()
                     onBackPressed()
@@ -1408,9 +1408,10 @@ fun CreateBookScreen(
             )
         }
     }
+}
 
-    @Composable
-    private fun PageInputDialog(
+@Composable
+private fun PageInputDialogContent(
         currentPage: Int,
         totalPages: Int,
         onPageSelected: (Int) -> Unit,
@@ -1491,8 +1492,8 @@ fun CreateBookScreen(
         )
     }
 
-    @Composable
-    private fun BackConfirmationDialog(
+@Composable
+private fun BackConfirmationDialogContent(
         onAbortAndLeave: () -> Unit,
         onStay: () -> Unit,
         onDismiss: () -> Unit
@@ -1528,5 +1529,4 @@ fun CreateBookScreen(
             }
         )
     }
-}
 
