@@ -341,9 +341,17 @@ fun NewHomeScreen(
             label = "Create\nNew",
             optionType = ImportOptionType.CREATE_NEW,
             recolor = false,
+            enabled = false,
             onClick = {
               showImportBottomSheet = false
-              onCreateBookClicked()
+              coroutineScope.launch {
+                snackbarHostState.currentSnackbarData?.dismiss()
+                snackbarHostState.showSnackbar(
+                  message = "Coming soon!",
+                  actionLabel = "Dismiss",
+                  duration = SnackbarDuration.Long
+                )
+              }
             }
           )
 
