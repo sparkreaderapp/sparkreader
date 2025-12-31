@@ -32,13 +32,20 @@ jobs:
           SPARKREADER_KEY_PASSWORD=${{ secrets.SPARKREADER_KEY_PASSWORD }}
           EOF
 
-      - name: Build release APK
+      - name: Build release APK and AAB
         run: |
-          ./gradlew assembleRelease
+          ./gradlew assembleRelease bundleRelease
 
       - name: Rename APK with version
         run: |
           mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/sparkreader-${{ github.ref_name }}.apk
+
+      - name: Upload AAB as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sparkreader-${{ github.ref_name }}.aab
+          path: app/build/outputs/bundle/release/app-release.aab
+          retention-days: 30
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
