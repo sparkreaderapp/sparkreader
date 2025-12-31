@@ -132,9 +132,12 @@ fun SettingsScreen(
     modelManagerViewModel.setNotificationPermissionLauncher(notificationPermissionLauncher)
   }
   
-  // Monitor model manager loading state
-  LaunchedEffect(modelManagerUiState.isLoadingModels) {
-    settingsViewModel.setModelsLoading(modelManagerUiState.isLoadingModels)
+  // Monitor model manager loading state - check if any models are downloading
+  LaunchedEffect(modelManagerUiState.modelDownloadStatus) {
+    val isLoadingModels = modelManagerUiState.modelDownloadStatus.values.any { 
+      it.status == ModelDownloadStatusType.CONNECTING 
+    }
+    settingsViewModel.setModelsLoading(isLoadingModels)
   }
 
   // Refresh library state when screen becomes visible
