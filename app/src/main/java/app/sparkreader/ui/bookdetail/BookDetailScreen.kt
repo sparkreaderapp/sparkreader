@@ -721,7 +721,7 @@ fun BookDetailScreen(
                     )
                   ) {
                     Text(
-                      text = "Go to Model Manager",
+                      text = "Go to Settings",
                       //style = MaterialTheme.typography.bodySmall
                     )
                   }
