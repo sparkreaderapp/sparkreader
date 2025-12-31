@@ -410,11 +410,11 @@ fun AboutScreen(
               Spacer(modifier = Modifier.height(8.dp))
               
               Text(
-                text = "Full terms available at: sparkreader.com/terms",
+                text = "Full terms available at: sparkreader.app/terms",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable {
-                  val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://sparkreader.com/terms"))
+                  val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://sparkreader.app/terms"))
                   context.startActivity(intent)
                 }
               )

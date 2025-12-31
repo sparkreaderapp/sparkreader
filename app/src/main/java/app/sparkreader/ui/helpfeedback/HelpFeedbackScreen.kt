@@ -327,7 +327,7 @@ private fun ExpandableFaqCard(
               append("   • Import an EPUB file\n")
               append("   • Visit the ")
               
-              pushStringAnnotation(tag = "URL", annotation = "https://sparkreader.com/library")
+              pushStringAnnotation(tag = "URL", annotation = "https://sparkreader.app/library")
               withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
                 append("SparkReader Starter Library")
               }
