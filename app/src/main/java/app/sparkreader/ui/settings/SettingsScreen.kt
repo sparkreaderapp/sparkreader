@@ -771,18 +771,19 @@ private fun ModelItem(
   val isSelected = selectedModelName == model.name
   val uriHandler = LocalUriHandler.current
 
-  Card(
+  Box(
     modifier = modifier
       .fillMaxWidth()
+      .border(
+        width = 1.dp,
+        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+        shape = RoundedCornerShape(8.dp)
+      )
       .clickable(enabled = isDownloaded && !isSelected) { 
         if (isDownloaded && !isSelected) {
           modelManagerViewModel.setSelectedModel(model.name)
         }
-      },
-    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-    colors = CardDefaults.cardColors(
-      containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
-    )
+      }
   ) {
     Column(
       modifier = Modifier
