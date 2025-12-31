@@ -322,8 +322,13 @@ private fun ExpandableFaqCard(
               append(")\n")
               append("3. Add books into your library:\n")
               append("   • Import from the SparkReader starter library\n")
-              append("   • Take a picture of book pages (OCR)\n")
-              append("   • EPUB and webpage import ")
+              append("   • Import EPUB ebooks and webpages ")
+              
+              withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)) {
+                append("(coming soon)")
+              }
+              
+              append("\n   • Take a picture of book pages (OCR) ")
               
               withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)) {
                 append("(coming soon)")
