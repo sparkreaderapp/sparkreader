@@ -88,13 +88,14 @@ fun HelpFeedbackScreen(
       question = "Getting Started",
       answer = """To get started with SparkReader:
 
-1. You should go to Settings > Model manager to download a Gemma 3n model. This multimodal model enables both contextual explanations and OCR for importing images.
-
-2. Add books into your library. Currently the supported modes are:
-   • Importing book from the SparkReader starter library (which you need to download from Settings), or
-   • Creating your own books by editing book pages manually or by converting images to text.
+1. Configure a local LLM (go to Settings)
+2. Configure SparkReader library (optional, go to Settings)
+3. Add books into your library:
+   • Import from the SparkReader starter library
+   • Take a picture of book pages (OCR)
+   • EPUB and webpage import (coming soon)
    
-3. Once a book is added to your library, tap on it to start reading, getting explanations, and chatting about the book!"""
+4. Once a book is added to your library, tap on it to start reading, getting explanations, and chatting about the book!"""
     ),
   
     FaqItem(
@@ -312,28 +313,34 @@ private fun ExpandableFaqCard(
           faq.question == "Getting Started" -> {
             val annotatedText = buildAnnotatedString {
               append("To get started with SparkReader:\n\n")
-              append("1. The ")
+              append("1. Configure a local LLM (go to ")
               
-              pushStringAnnotation(tag = "URL", annotation = "https://deepmind.google/models/gemma/gemma-3n/")
+              pushStringAnnotation(tag = "SETTINGS", annotation = "settings")
               withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
-                append("Gemma 3n model")
+                append("Settings")
               }
               pop()
               
-              append(" should have been configured on startup. This multimodal model enables both OCR for importing images and contextual explanations (an advanced contextual dictionary).\n\n")
-              append("2. Import books by clicking the plus (+) sign. You can:\n")
-              append("   • Take a picture of book pages\n")
-              append("   • Capture a piece of newspaper\n")
-              append("   • Import an EPUB file\n")
-              append("   • Visit the ")
+              append(")\n")
+              append("2. Configure SparkReader library (optional, go to ")
               
-              pushStringAnnotation(tag = "URL", annotation = "https://sparkreader.app/library")
+              pushStringAnnotation(tag = "SETTINGS", annotation = "settings")
               withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
-                append("SparkReader Starter Library")
+                append("Settings")
               }
               pop()
               
-              append("\n\n3. Once a book is added to your library, tap on it to start reading.")
+              append(")\n")
+              append("3. Add books into your library:\n")
+              append("   • Import from the SparkReader starter library\n")
+              append("   • Take a picture of book pages (OCR)\n")
+              append("   • EPUB and webpage import ")
+              
+              withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)) {
+                append("(coming soon)")
+              }
+              
+              append("\n\n4. Once a book is added to your library, tap on it to start reading!")
             }
             
             ClickableText(
@@ -342,11 +349,14 @@ private fun ExpandableFaqCard(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
               ),
               onClick = { offset ->
-                val annotations = annotatedText.getStringAnnotations(tag = "URL", start = offset, end = offset)
+                val annotations = annotatedText.getStringAnnotations(start = offset, end = offset)
                 if (annotations.isNotEmpty()) {
                   val annotation = annotations.first()
-                  val intent = Intent(Intent.ACTION_VIEW, Uri.parse(annotation.item))
-                  context.startActivity(intent)
+                  when (annotation.tag) {
+                    "SETTINGS" -> {
+                      onNavigateToSettings()
+                    }
+                  }
                 }
               }
             )
