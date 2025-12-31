@@ -54,6 +54,10 @@ data class LibraryState(
   val shouldNavigateBack: Boolean = false
 )
 
+data class ModelsState(
+  val isLoadingModels: Boolean = false
+)
+
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
   private val downloadRepository: DownloadRepository,
@@ -63,6 +67,9 @@ class SettingsViewModel @Inject constructor(
   
   private val _libraryState = MutableStateFlow(LibraryState())
   val libraryState = _libraryState.asStateFlow()
+  
+  private val _modelsState = MutableStateFlow(ModelsState())
+  val modelsState = _modelsState.asStateFlow()
   
   private val externalFilesDir = context.getExternalFilesDir(null)
   private var currentLibraryModel: Model? = null
@@ -270,5 +277,9 @@ class SettingsViewModel @Inject constructor(
   
   fun clearNavigateBack() {
     _libraryState.value = _libraryState.value.copy(shouldNavigateBack = false)
+  }
+  
+  fun setModelsLoading(isLoading: Boolean) {
+    _modelsState.value = _modelsState.value.copy(isLoadingModels = isLoading)
   }
 }

@@ -130,6 +130,11 @@ fun SettingsScreen(
   LaunchedEffect(notificationPermissionLauncher) {
     modelManagerViewModel.setNotificationPermissionLauncher(notificationPermissionLauncher)
   }
+  
+  // Monitor model manager loading state
+  LaunchedEffect(modelManagerUiState.isLoadingModels) {
+    settingsViewModel.setModelsLoading(modelManagerUiState.isLoadingModels)
+  }
 
   // Refresh library state when screen becomes visible
   LaunchedEffect(Unit) {
@@ -192,7 +197,8 @@ fun SettingsScreen(
           onModelDeleteRequested = { model ->
             modelToDelete = model
             showModelDeleteConfirmation = true
-          }
+          },
+          isLoadingModels = modelsState.isLoadingModels
         )
       }
       
@@ -629,6 +635,7 @@ private fun ModelManagerSection(
   expanded: Boolean,
   onExpandedChange: (Boolean) -> Unit,
   onModelDeleteRequested: (app.sparkreader.data.Model) -> Unit,
+  isLoadingModels: Boolean = false,
   modifier: Modifier = Modifier,
 ) {
   val task = TASK_LLM_ASK_IMAGE
@@ -682,14 +689,23 @@ private fun ModelManagerSection(
         
         IconButton(
           onClick = { onExpandedChange(!expanded) },
-          modifier = Modifier.size(32.dp)
+          modifier = Modifier.size(32.dp),
+          enabled = !isLoadingModels
         ) {
-          Icon(
-            imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-            contentDescription = if (expanded) "Collapse" else "Expand",
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(20.dp)
-          )
+          if (isLoadingModels) {
+            CircularProgressIndicator(
+              modifier = Modifier.size(20.dp),
+              strokeWidth = 2.dp,
+              color = MaterialTheme.colorScheme.primary
+            )
+          } else {
+            Icon(
+              imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+              contentDescription = if (expanded) "Collapse" else "Expand",
+              tint = MaterialTheme.colorScheme.onSurfaceVariant,
+              modifier = Modifier.size(20.dp)
+            )
+          }
         }
       }
       
