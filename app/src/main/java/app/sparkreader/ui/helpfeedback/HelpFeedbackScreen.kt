@@ -117,7 +117,8 @@ You can also ask follow-up questions in a conventional chat interface."""
       question = "What books are included in SparkReader Library?",
       answer = """We have endeavored to include seminal public domain books spanning the entirety of human history—from ancient times to the present—and across diverse world regions.
 Our selection covers a wide range of disciplines, including philosophy, religion, science, and law, as well as literary fiction genres such as crime, thriller, and mystery, and non-fiction categories such as travel writing and biographies.
-      """
+
+You can browse the full catalog at: https://sparkreader.app/library"""
     ),
     FaqItem(
       question = "Is SparkReader open source?",
@@ -321,8 +322,15 @@ private fun ExpandableFaqCard(
               
               append(")\n")
               append("3. Add books into your library:\n")
-              append("   • Import from the SparkReader starter library\n")
-              append("   • Import EPUB ebooks and webpages ")
+              append("   • Import from the ")
+              
+              pushStringAnnotation(tag = "URL", annotation = "https://sparkreader.app/library")
+              withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
+                append("SparkReader starter library")
+              }
+              pop()
+              
+              append("\n   • Import EPUB ebooks and webpages ")
               
               withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)) {
                 append("(coming soon)")
@@ -349,6 +357,10 @@ private fun ExpandableFaqCard(
                   when (annotation.tag) {
                     "SETTINGS" -> {
                       onNavigateToSettings?.invoke()
+                    }
+                    "URL" -> {
+                      val intent = Intent(Intent.ACTION_VIEW, Uri.parse(annotation.item))
+                      context.startActivity(intent)
                     }
                   }
                 }
