@@ -112,6 +112,7 @@ fun SettingsScreen(
 ) {
   var selectedTheme by remember { mutableStateOf(ThemeSettings.themeOverride.value) }
   val libraryState by settingsViewModel.libraryState.collectAsState()
+  val modelsState by settingsViewModel.modelsState.collectAsState()
   var showDeleteConfirmation by remember { mutableStateOf(false) }
   val modelManagerUiState by modelManagerViewModel.uiState.collectAsState()
   val selectedModelName = modelManagerUiState.selectedModelName
