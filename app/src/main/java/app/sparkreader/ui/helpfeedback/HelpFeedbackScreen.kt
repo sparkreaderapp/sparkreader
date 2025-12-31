@@ -312,7 +312,15 @@ private fun ExpandableFaqCard(
               pop()
               
               append(")\n")
-              append("2. Configure SparkReader Library (go to ")
+              append("2. Configure ")
+              
+              pushStringAnnotation(tag = "URL", annotation = "https://sparkreader.app/library")
+              withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
+                append("SparkReader Library")
+              }
+              pop()
+              
+              append(" (go to ")
               
               pushStringAnnotation(tag = "SETTINGS", annotation = "settings")
               withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
