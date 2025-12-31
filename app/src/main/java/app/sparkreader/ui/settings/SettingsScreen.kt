@@ -43,6 +43,8 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -678,12 +680,17 @@ private fun ModelManagerSection(
           )
         }
         
-        Icon(
-          imageVector = if (expanded) Icons.AutoMirrored.Filled.ArrowBack else Icons.AutoMirrored.Filled.ArrowForward,
-          contentDescription = if (expanded) "Collapse" else "Expand",
-          tint = MaterialTheme.colorScheme.onSurfaceVariant,
-          modifier = Modifier.size(20.dp)
-        )
+        IconButton(
+          onClick = { onExpandedChange(!expanded) },
+          modifier = Modifier.size(32.dp)
+        ) {
+          Icon(
+            imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+            contentDescription = if (expanded) "Collapse" else "Expand",
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(20.dp)
+          )
+        }
       }
       
       // Expanded content
