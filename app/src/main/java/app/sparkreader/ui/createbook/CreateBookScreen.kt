@@ -153,7 +153,7 @@ fun CreateBookScreen(
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
-    
+
     // OCR state from ViewModel
     val ocrState by viewModel.ocrState.collectAsState()
     val selectedModelName by viewModel.selectedModelName.collectAsState()
@@ -163,7 +163,7 @@ fun CreateBookScreen(
     // Book metadata
     var title by remember { mutableStateOf(bookToEdit?.title ?: "") }
     var author by remember { mutableStateOf(bookToEdit?.author ?: "") }
-    
+
     // Track if user has interacted with the form when editing
     var hasUserInteracted by remember { mutableStateOf(false) }
 
@@ -204,35 +204,35 @@ fun CreateBookScreen(
     var currentPageIndex by remember { mutableStateOf(0) }
     var isEditMode by remember { mutableStateOf(false) }
     var editingContent by remember { mutableStateOf("") }
-    
+
     // Track if user has explicitly saved any page (even empty)
     var hasExplicitlySavedPage by remember { mutableStateOf(false) }
-    
+
     // Track if gallery or camera was tapped (to show spinner immediately)
     var galleryTapped by remember { mutableStateOf(false) }
     var cameraTapped by remember { mutableStateOf(false) }
-    
+
     // Unsaved changes dialog
     var showUnsavedChangesDialog by remember { mutableStateOf(false) }
-    
+
     // Unsaved edit dialog
     var showUnsavedEditDialog by remember { mutableStateOf(false) }
     var pendingNavigation: (() -> Unit)? by remember { mutableStateOf(null) }
-    
+
     // Delete confirmation dialog
     var showDeleteConfirmation by remember { mutableStateOf(false) }
-    
+
     // Page input dialog
     var showPageInputDialog by remember { mutableStateOf(false) }
-    
+
     // Saving state
     var isSaving by remember { mutableStateOf(false) }
-    
+
     val currentPage = pages[currentPageIndex]
-    
+
     // Track keyboard visibility
     val isKeyboardVisible = WindowInsets.isImeVisible
-    
+
     // Image picker launcher
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -244,7 +244,7 @@ fun CreateBookScreen(
             galleryTapped = false
         }
     }
-  
+
     // Function to create a temporary file for camera capture
     fun createImageFile(): File {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
@@ -270,7 +270,7 @@ fun CreateBookScreen(
         // Clean up the URI
         cameraImageUri = null
     }
-    
+
     // Camera permission launcher
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -317,7 +317,7 @@ fun CreateBookScreen(
             }
         }
     }
-    
+
     // Handle OCR state changes
     LaunchedEffect(ocrState) {
         when (val state = ocrState) {
@@ -333,6 +333,7 @@ fun CreateBookScreen(
                     if (bookToEdit != null) hasUserInteracted = true
                 }
             }
+
             is OcrState.Success -> {
                 if (isEditMode) {
                     editingContent = state.text
@@ -345,6 +346,7 @@ fun CreateBookScreen(
                 cameraTapped = false // Reset camera tapped state
                 viewModel.resetOcrState()
             }
+
             is OcrState.Error -> {
                 // Clear any existing snackbar before showing error
                 snackbarHostState.currentSnackbarData?.dismiss()
@@ -359,10 +361,11 @@ fun CreateBookScreen(
                 cameraTapped = false // Reset camera tapped state
                 viewModel.resetOcrState()
             }
+
             else -> {}
         }
     }
-    
+
     // Refresh model state when screen becomes visible
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
@@ -371,6 +374,7 @@ fun CreateBookScreen(
                 androidx.lifecycle.Lifecycle.Event.ON_RESUME -> {
                     viewModel.refreshModelState()
                 }
+
                 else -> {}
             }
         }
@@ -381,7 +385,7 @@ fun CreateBookScreen(
             snackbarHostState.currentSnackbarData?.dismiss()
         }
     }
-    
+
     // Check if there are unsaved changes
     fun hasUnsavedChanges(): Boolean {
         if (bookToEdit != null) {
@@ -389,34 +393,34 @@ fun CreateBookScreen(
             return hasUserInteracted
         } else {
             // For new book, check if any content was added
-            return title.isNotBlank() || 
-                   author.isNotBlank() || 
-                   pages.any { it.content.isNotBlank() } ||
-                   pages.size > 1
+            return title.isNotBlank() ||
+                    author.isNotBlank() ||
+                    pages.any { it.content.isNotBlank() } ||
+                    pages.size > 1
         }
     }
-    
+
     // Check if we're in the initial empty state (no content at all)
     fun isInitialEmptyState(): Boolean {
-        return title.isBlank() && 
-               author.isBlank() && 
-               pages.size == 1 && 
-               pages[0].content.isBlank()
+        return title.isBlank() &&
+                author.isBlank() &&
+                pages.size == 1 &&
+                pages[0].content.isBlank()
     }
-    
+
     // Check if there's any page content
     fun hasPageContent(): Boolean {
-        return pages.any { it.content.isNotBlank() } || 
-               pages.size > 1 || 
-               isEditMode ||  // Enable add pages when in edit mode
-               hasExplicitlySavedPage  // Keep enabled if user has saved any page
+        return pages.any { it.content.isNotBlank() } ||
+                pages.size > 1 ||
+                isEditMode ||  // Enable add pages when in edit mode
+                hasExplicitlySavedPage  // Keep enabled if user has saved any page
     }
-    
+
     // Check if OCR is actively running
     fun isOcrActive(): Boolean {
         return ocrState is OcrState.Processing || ocrState is OcrState.Streaming
     }
-    
+
     // Handle back navigation
     fun handleBackNavigation() {
         // Check if OCR generation is active first
@@ -425,7 +429,7 @@ fun CreateBookScreen(
             // OCR dialog will be shown by the viewModel
             return
         }
-        
+
         // No OCR active, check for unsaved changes
         if (hasUnsavedChanges()) {
             showUnsavedChangesDialog = true
@@ -433,12 +437,12 @@ fun CreateBookScreen(
             onBackPressed()
         }
     }
-    
+
     // Back handler for system back button
     BackHandler(enabled = !isSaving) {
         handleBackNavigation()
     }
-    
+
     fun saveBook() {
         if (title.isBlank()) {
             coroutineScope.launch {
@@ -461,17 +465,17 @@ fun CreateBookScreen(
             try {
                 // Use existing book ID if editing, otherwise create new
                 val bookId = bookToEdit?.libraryId ?: UUID.randomUUID().toString()
-                
+
                 // Create library directory if it doesn't exist
                 val libraryDir = File(context.filesDir, "library")
                 if (!libraryDir.exists()) {
                     libraryDir.mkdirs()
                 }
-                
+
                 // Create book directory
                 val bookDir = File(libraryDir, bookId)
                 bookDir.mkdirs()
-                
+
                 // Save pages as JSON files
                 val gson = Gson()
                 var currentOffset = 0L
@@ -479,14 +483,14 @@ fun CreateBookScreen(
                     val pageFile = File(bookDir, "page_${index}.json")
                     val startOffset = currentOffset
                     val endOffset = currentOffset + page.content.length
-                    
+
                     val pageData = PageData(
                         content = page.content,
                         startOffset = startOffset,
                         endOffset = endOffset,
                         pageNumber = index
                     )
-                    
+
                     pageFile.writeText(gson.toJson(pageData))
                     currentOffset = endOffset
                 }
@@ -496,7 +500,12 @@ fun CreateBookScreen(
                     id = bookToEdit?.id ?: bookId.hashCode(),
                     title = title,
                     author = author,
-                    date = bookToEdit?.date ?: "Created on ${SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault()).format(Date())}",
+                    date = bookToEdit?.date ?: "Created on ${
+                        SimpleDateFormat(
+                            "dd-MMM-yyyy",
+                            Locale.getDefault()
+                        ).format(Date())
+                    }",
                     description = bookToEdit?.description ?: "",
                     libraryId = bookId,
                     totalPages = pages.size,
@@ -505,13 +514,14 @@ fun CreateBookScreen(
                     source_link = "",
                     tags = "" // x`"user"
                 )
-                
+
                 // Load existing books
                 val booksFile = File(context.filesDir, "books.json")
                 val existingBooks = if (booksFile.exists()) {
                     val json = booksFile.readText()
                     try {
-                        gson.fromJson(json, Array<app.sparkreader.ui.newhome.Book>::class.java).toMutableList()
+                        gson.fromJson(json, Array<app.sparkreader.ui.newhome.Book>::class.java)
+                            .toMutableList()
                     } catch (e: Exception) {
                         mutableListOf()
                     }
@@ -525,7 +535,7 @@ fun CreateBookScreen(
                     existingBooks.removeAll { it.id == bookToEdit.id }
                 }
                 existingBooks.add(bookMetadata)
-                
+
                 // Save updated books list
                 booksFile.writeText(gson.toJson(existingBooks))
 
@@ -548,7 +558,7 @@ fun CreateBookScreen(
             }
         }
     }
-    
+
     fun addPageBeforeCurrent() {
         if (isEditMode) {
             showUnsavedEditDialog = true
@@ -573,7 +583,7 @@ fun CreateBookScreen(
             if (bookToEdit != null) hasUserInteracted = true
         }
     }
-    
+
     fun addPageAfterCurrent() {
         if (isEditMode) {
             showUnsavedEditDialog = true
@@ -602,7 +612,7 @@ fun CreateBookScreen(
             if (bookToEdit != null) hasUserInteracted = true
         }
     }
-    
+
     fun performDeleteCurrentPage() {
         if (pages.size <= 1) {
             // If it's the only page, replace it with a new empty page
@@ -622,15 +632,15 @@ fun CreateBookScreen(
                 isEditMode = false
                 editingContent = ""
             }
-            
+
             // Remove the current page
             pages.removeAt(currentPageIndex)
-            
+
             // Renumber all pages
             pages.forEachIndexed { index, page ->
                 page.pageNumber = index + 1
             }
-            
+
             // Adjust current page index
             if (currentPageIndex >= pages.size) {
                 // If we deleted the last page, go to the new last page
@@ -640,11 +650,11 @@ fun CreateBookScreen(
         }
         if (bookToEdit != null) hasUserInteracted = true
     }
-    
+
     fun deleteCurrentPage() {
         showDeleteConfirmation = true
     }
-    
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
@@ -652,22 +662,22 @@ fun CreateBookScreen(
                 title = { Text(if (bookToEdit != null) "Edit Book" else "Create New Book") },
                 navigationIcon = {
                     val backIconColor by animateColorAsState(
-                        targetValue = if (!isSaving) 
-                            MaterialTheme.colorScheme.onSurface 
-                        else 
+                        targetValue = if (!isSaving)
+                            MaterialTheme.colorScheme.onSurface
+                        else
                             MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
                         animationSpec = tween(durationMillis = 200),
                         label = "backIconColor"
                     )
-                    
+
                     IconButton(
-                        onClick = { 
+                        onClick = {
                             handleBackNavigation()
                         },
                         enabled = !isSaving
                     ) {
                         Icon(
-                            Icons.Default.ArrowBack, 
+                            Icons.Default.ArrowBack,
                             contentDescription = "Back",
                             tint = backIconColor
                         )
@@ -675,26 +685,26 @@ fun CreateBookScreen(
                 },
                 actions = {
                     val saveEnabled = hasUnsavedChanges() && !isSaving
-                    
+
                     // Animate colors for smooth transitions
                     val iconColor by animateColorAsState(
-                        targetValue = if (saveEnabled) 
-                            MaterialTheme.colorScheme.onSurface 
-                        else 
+                        targetValue = if (saveEnabled)
+                            MaterialTheme.colorScheme.onSurface
+                        else
                             MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
                         animationSpec = tween(durationMillis = 200),
                         label = "saveIconColor"
                     )
-                    
+
                     val textColor by animateColorAsState(
-                        targetValue = if (saveEnabled) 
-                            MaterialTheme.colorScheme.onSurface 
-                        else 
+                        targetValue = if (saveEnabled)
+                            MaterialTheme.colorScheme.onSurface
+                        else
                             MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
                         animationSpec = tween(durationMillis = 200),
                         label = "saveTextColor"
                     )
-                    
+
                     TextButton(
                         onClick = { saveBook() },
                         enabled = saveEnabled
@@ -707,7 +717,7 @@ fun CreateBookScreen(
                             )
                         } else {
                             Icon(
-                                Icons.Default.Save, 
+                                Icons.Default.Save,
                                 contentDescription = "Save",
                                 tint = iconColor
                             )
@@ -735,7 +745,7 @@ fun CreateBookScreen(
                 Column {
                     OutlinedTextField(
                         value = title,
-                        onValueChange = { 
+                        onValueChange = {
                             title = it
                             if (bookToEdit != null) hasUserInteracted = true
                         },
@@ -743,12 +753,12 @@ fun CreateBookScreen(
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true
                     )
-                    
+
                     Spacer(modifier = Modifier.height(8.dp))
-                    
+
                     OutlinedTextField(
                         value = author,
-                        onValueChange = { 
+                        onValueChange = {
                             author = it
                             if (bookToEdit != null) hasUserInteracted = true
                         },
@@ -756,11 +766,11 @@ fun CreateBookScreen(
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true
                     )
-                    
+
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
-            
+
             // Page content area
             Card(
                 modifier = Modifier
@@ -777,7 +787,7 @@ fun CreateBookScreen(
                     if (isEditMode) {
                         TextField(
                             value = editingContent,
-                            onValueChange = { 
+                            onValueChange = {
                                 editingContent = it
                                 if (bookToEdit != null) hasUserInteracted = true
                             },
@@ -793,10 +803,11 @@ fun CreateBookScreen(
                             placeholder = { Text("Start typing...") }
                         )
                     }
-                    
+
                     // Empty page icons - hide when streaming has text or when processing starts
                     val streamingState = ocrState as? OcrState.Streaming
-                    val hasStreamingText = streamingState != null && streamingState.text.isNotBlank()
+                    val hasStreamingText =
+                        streamingState != null && streamingState.text.isNotBlank()
                     if (!isEditMode && currentPage.content.isBlank() && ocrState is OcrState.Idle && !hasStreamingText) {
                         Column(
                             modifier = Modifier
@@ -808,8 +819,9 @@ fun CreateBookScreen(
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(32.dp)
                             ) {
-                                val isProcessing = galleryTapped || cameraTapped || ocrState is OcrState.Processing || ocrState is OcrState.Streaming
-                                
+                                val isProcessing =
+                                    galleryTapped || cameraTapped || ocrState is OcrState.Processing || ocrState is OcrState.Streaming
+
                                 if (isProcessing) {
                                     // Show only a single spinner in the center when any source was tapped or OCR is active
                                     CircularProgressIndicator(
@@ -838,11 +850,12 @@ fun CreateBookScreen(
                                                         // Permission already granted
                                                         try {
                                                             val photoFile = createImageFile()
-                                                            cameraImageUri = FileProvider.getUriForFile(
-                                                                context,
-                                                                "${context.packageName}.provider",
-                                                                photoFile
-                                                            )
+                                                            cameraImageUri =
+                                                                FileProvider.getUriForFile(
+                                                                    context,
+                                                                    "${context.packageName}.provider",
+                                                                    photoFile
+                                                                )
                                                             cameraLauncher.launch(cameraImageUri!!)
                                                         } catch (e: IOException) {
                                                             cameraTapped = false
@@ -860,6 +873,7 @@ fun CreateBookScreen(
                                                             }
                                                         }
                                                     }
+
                                                     else -> {
                                                         // Request camera permission
                                                         cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
@@ -868,7 +882,7 @@ fun CreateBookScreen(
                                             }
                                         }
                                     )
-                                    
+
                                     // Gallery icon
                                     OcrSourceIcon(
                                         icon = Icons.Default.Image,
@@ -883,7 +897,7 @@ fun CreateBookScreen(
                                             }
                                         }
                                     )
-                                    
+
                                     // Pencil icon (enabled)
                                     Icon(
                                         imageVector = Icons.Default.Edit,
@@ -899,7 +913,7 @@ fun CreateBookScreen(
                                     )
                                 }
                             }
-                            
+
                             // Show message if no model is selected or there's an error
                             val errorMessage = modelValidationError
                             if (!errorMessage.isNullOrEmpty()) {
@@ -933,8 +947,8 @@ fun CreateBookScreen(
                             }
                         }
                     }
-                    
-                    
+
+
                     // Page content - show during streaming too
                     if (!isEditMode && (currentPage.content.isNotBlank() || ocrState is OcrState.Streaming)) {
                         // Use streaming text if available, otherwise use saved content
@@ -942,7 +956,7 @@ fun CreateBookScreen(
                             is OcrState.Streaming -> state.text
                             else -> currentPage.content
                         }
-                        
+
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -969,7 +983,7 @@ fun CreateBookScreen(
                             }
                         }
                     }
-                    
+
                     // OCR processing indicator - show on top of content
                     if (ocrState is OcrState.Processing || ocrState is OcrState.Streaming) {
                         Column(
@@ -982,19 +996,22 @@ fun CreateBookScreen(
                             ) {
                                 // Show stop button if streaming and word count exceeds threshold
                                 val streamingState = ocrState as? OcrState.Streaming
-                                val showStopButton = streamingState != null && 
-                                    streamingState.wordCount >= STOP_BUTTON_WORD_THRESHOLD
-                                
+                                val showStopButton = streamingState != null &&
+                                        streamingState.wordCount >= STOP_BUTTON_WORD_THRESHOLD
+
                                 CircularProgressIndicator(
                                     modifier = Modifier.size(48.dp),
                                     color = MaterialTheme.colorScheme.primary
                                 )
-                                
+
                                 if (showStopButton) {
                                     IconButton(
-                                        onClick = { 
-                                            Log.d("CreateBookScreen", "Stop button tapped - calling stopOcrGeneration()")
-                                            viewModel.stopOcrGeneration() 
+                                        onClick = {
+                                            Log.d(
+                                                "CreateBookScreen",
+                                                "Stop button tapped - calling stopOcrGeneration()"
+                                            )
+                                            viewModel.stopOcrGeneration()
                                         },
                                         modifier = Modifier.size(48.dp)
                                     ) {
@@ -1007,14 +1024,14 @@ fun CreateBookScreen(
                                     }
                                 }
                             }
-                            
+
                             // Only show status message for processing state
                             val statusMessage = when (val state = ocrState) {
                                 is OcrState.Processing -> state.status
                                 is OcrState.Streaming -> "" // Don't show status during streaming - text is shown in page content
                                 else -> ""
                             }
-                            
+
                             if (statusMessage.isNotEmpty()) {
                                 Text(
                                     text = statusMessage,
@@ -1027,7 +1044,7 @@ fun CreateBookScreen(
                             }
                         }
                     }
-                    
+
                     // Save/Cancel buttons when in edit mode
                     if (isEditMode) {
                         Row(
@@ -1045,13 +1062,14 @@ fun CreateBookScreen(
                             ) {
                                 Text("Cancel")
                             }
-                            
+
                             Button(
                                 onClick = {
                                     currentPage.content = editingContent
                                     isEditMode = false
                                     editingContent = ""
-                                    hasExplicitlySavedPage = true  // User has explicitly saved a page
+                                    hasExplicitlySavedPage =
+                                        true  // User has explicitly saved a page
                                     if (bookToEdit != null) hasUserInteracted = true
                                 }
                             ) {
@@ -1061,453 +1079,454 @@ fun CreateBookScreen(
                     }
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             // Navigation and page management row - hide when keyboard is visible AND in edit mode
             if (!(isEditMode && isKeyboardVisible)) {
                 Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Add page before current
-                TooltipBox(
-                    positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                    tooltip = {
-                        Text(
-                            "Add page before current",
-                            modifier = Modifier
-                                .background(
-                                    MaterialTheme.colorScheme.inverseSurface,
-                                    RoundedCornerShape(4.dp)
-                                )
-                                .padding(horizontal = 8.dp, vertical = 4.dp),
-                            color = MaterialTheme.colorScheme.inverseOnSurface
-                        )
-                    },
-                    state = rememberTooltipState()
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(
-                        onClick = { addPageBeforeCurrent() },
-                        enabled = hasPageContent() && !isOcrActive()
+                    // Add page before current
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                        tooltip = {
+                            Text(
+                                "Add page before current",
+                                modifier = Modifier
+                                    .background(
+                                        MaterialTheme.colorScheme.inverseSurface,
+                                        RoundedCornerShape(4.dp)
+                                    )
+                                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                                color = MaterialTheme.colorScheme.inverseOnSurface
+                            )
+                        },
+                        state = rememberTooltipState()
                     ) {
-                        Icon(
-                            Icons.Default.FirstPage,
-                            contentDescription = "Add page before current",
-                            tint = if (hasPageContent() && !isOcrActive()) 
-                                MaterialTheme.colorScheme.primary 
-                            else 
-                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
-                        )
+                        IconButton(
+                            onClick = { addPageBeforeCurrent() },
+                            enabled = hasPageContent() && !isOcrActive()
+                        ) {
+                            Icon(
+                                Icons.Default.FirstPage,
+                                contentDescription = "Add page before current",
+                                tint = if (hasPageContent() && !isOcrActive())
+                                    MaterialTheme.colorScheme.primary
+                                else
+                                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                            )
+                        }
                     }
-                }
-                
-                // Plus icon (decorative only)
-                Icon(
-                    Icons.Default.Add,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .alpha(0.5f),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                
-                // Add page after current
-                TooltipBox(
-                    positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                    tooltip = {
-                        Text(
-                            "Add page after current",
-                            modifier = Modifier
-                                .background(
-                                    MaterialTheme.colorScheme.inverseSurface,
-                                    RoundedCornerShape(4.dp)
-                                )
-                                .padding(horizontal = 8.dp, vertical = 4.dp),
-                            color = MaterialTheme.colorScheme.inverseOnSurface
-                        )
-                    },
-                    state = rememberTooltipState()
-                ) {
-                    IconButton(
-                        onClick = { addPageAfterCurrent() },
-                        enabled = hasPageContent() && !isOcrActive()
+
+                    // Plus icon (decorative only)
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .alpha(0.5f),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    // Add page after current
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                        tooltip = {
+                            Text(
+                                "Add page after current",
+                                modifier = Modifier
+                                    .background(
+                                        MaterialTheme.colorScheme.inverseSurface,
+                                        RoundedCornerShape(4.dp)
+                                    )
+                                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                                color = MaterialTheme.colorScheme.inverseOnSurface
+                            )
+                        },
+                        state = rememberTooltipState()
                     ) {
-                        Icon(
-                            Icons.Default.LastPage,
-                            contentDescription = "Add page after current",
-                            tint = if (hasPageContent() && !isOcrActive()) 
-                                MaterialTheme.colorScheme.primary 
-                            else 
-                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
-                        )
+                        IconButton(
+                            onClick = { addPageAfterCurrent() },
+                            enabled = hasPageContent() && !isOcrActive()
+                        ) {
+                            Icon(
+                                Icons.Default.LastPage,
+                                contentDescription = "Add page after current",
+                                tint = if (hasPageContent() && !isOcrActive())
+                                    MaterialTheme.colorScheme.primary
+                                else
+                                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                            )
+                        }
                     }
-                }
-                
-                Spacer(modifier = Modifier.width(16.dp))
-                
-                // Delete current page
-                TooltipBox(
-                    positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                    tooltip = {
-                        Text(
-                            "Delete current page",
-                            modifier = Modifier
-                                .background(
-                                    MaterialTheme.colorScheme.inverseSurface,
-                                    RoundedCornerShape(4.dp)
-                                )
-                                .padding(horizontal = 8.dp, vertical = 4.dp),
-                            color = MaterialTheme.colorScheme.inverseOnSurface
-                        )
-                    },
-                    state = rememberTooltipState()
-                ) {
-                    IconButton(
-                        onClick = { deleteCurrentPage() },
-                        enabled = hasPageContent() && !isOcrActive()
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    // Delete current page
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                        tooltip = {
+                            Text(
+                                "Delete current page",
+                                modifier = Modifier
+                                    .background(
+                                        MaterialTheme.colorScheme.inverseSurface,
+                                        RoundedCornerShape(4.dp)
+                                    )
+                                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                                color = MaterialTheme.colorScheme.inverseOnSurface
+                            )
+                        },
+                        state = rememberTooltipState()
                     ) {
-                        Icon(
-                            Icons.Default.Delete,
-                            contentDescription = "Delete current page",
-                            tint = if (hasPageContent() && !isOcrActive()) 
-                                MaterialTheme.colorScheme.error 
-                            else 
-                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
-                        )
+                        IconButton(
+                            onClick = { deleteCurrentPage() },
+                            enabled = hasPageContent() && !isOcrActive()
+                        ) {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = "Delete current page",
+                                tint = if (hasPageContent() && !isOcrActive())
+                                    MaterialTheme.colorScheme.error
+                                else
+                                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                            )
+                        }
                     }
-                }
-                
-                Spacer(modifier = Modifier.width(8.dp))
-                
-                // Previous page
-                IconButton(
-                    onClick = {
-                        if (isEditMode) {
-                            showUnsavedEditDialog = true
-                            pendingNavigation = {
-                                if (currentPageIndex > 0) {
-                                    currentPageIndex--
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    // Previous page
+                    IconButton(
+                        onClick = {
+                            if (isEditMode) {
+                                showUnsavedEditDialog = true
+                                pendingNavigation = {
+                                    if (currentPageIndex > 0) {
+                                        currentPageIndex--
+                                    }
+                                }
+                            } else if (currentPageIndex > 0) {
+                                currentPageIndex--
+                            }
+                        },
+                        enabled = currentPageIndex > 0 && !isOcrActive()
+                    ) {
+                        Icon(Icons.Default.ArrowBackIos, contentDescription = "Previous")
+                    }
+
+                    // Page indicator
+                    Text(
+                        text = "${currentPage.pageNumber} / ${pages.size}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .clickable(enabled = !isOcrActive()) {
+                                if (!isOcrActive()) {
+                                    showPageInputDialog = true
                                 }
                             }
-                        } else if (currentPageIndex > 0) {
-                            currentPageIndex--
-                        }
-                    },
-                    enabled = currentPageIndex > 0 && !isOcrActive()
-                ) {
-                    Icon(Icons.Default.ArrowBackIos, contentDescription = "Previous")
-                }
-                
-                // Page indicator
-                Text(
-                    text = "${currentPage.pageNumber} / ${pages.size}",
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .clickable(enabled = !isOcrActive()) { 
-                            if (!isOcrActive()) {
-                                showPageInputDialog = true 
-                            }
-                        }
-                )
-                
-                // Next page
-                IconButton(
-                    onClick = {
-                        if (isEditMode) {
-                            showUnsavedEditDialog = true
-                            pendingNavigation = {
-                                if (currentPageIndex < pages.size - 1) {
-                                    currentPageIndex++
+                    )
+
+                    // Next page
+                    IconButton(
+                        onClick = {
+                            if (isEditMode) {
+                                showUnsavedEditDialog = true
+                                pendingNavigation = {
+                                    if (currentPageIndex < pages.size - 1) {
+                                        currentPageIndex++
+                                    }
                                 }
+                            } else if (currentPageIndex < pages.size - 1) {
+                                currentPageIndex++
                             }
-                        } else if (currentPageIndex < pages.size - 1) {
-                            currentPageIndex++
-                        }
-                    },
-                    enabled = currentPageIndex < pages.size - 1 && !isOcrActive()
-                ) {
-                    Icon(Icons.Default.ArrowForwardIos, contentDescription = "Next")
+                        },
+                        enabled = currentPageIndex < pages.size - 1 && !isOcrActive()
+                    ) {
+                        Icon(Icons.Default.ArrowForwardIos, contentDescription = "Next")
+                    }
                 }
             }
         }
-    }
-    
-    // Unsaved changes confirmation dialog
-    if (showUnsavedChangesDialog) {
-        AlertDialog(
-            onDismissRequest = { showUnsavedChangesDialog = false },
-            title = { Text("Unsaved Changes") },
-            text = { Text("Are you sure you want to leave? Any unsaved changes will be lost.") },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        showUnsavedChangesDialog = false
-                        // Stop any ongoing OCR generation before leaving
-                        if (isOcrActive()) {
-                            viewModel.stopOcrGeneration()
+
+        // Unsaved changes confirmation dialog
+        if (showUnsavedChangesDialog) {
+            AlertDialog(
+                onDismissRequest = { showUnsavedChangesDialog = false },
+                title = { Text("Unsaved Changes") },
+                text = { Text("Are you sure you want to leave? Any unsaved changes will be lost.") },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            showUnsavedChangesDialog = false
+                            // Stop any ongoing OCR generation before leaving
+                            if (isOcrActive()) {
+                                viewModel.stopOcrGeneration()
+                            }
+                            // Exit edit mode if active (discarding edits)
+                            if (isEditMode) {
+                                isEditMode = false
+                                editingContent = ""
+                            }
+                            onBackPressed()
+                        },
+                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Text("Discard & Leave")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            showUnsavedChangesDialog = false
+                            // User chose to stay - keep edit mode and content as is
                         }
-                        // Exit edit mode if active (discarding edits)
-                        if (isEditMode) {
+                    ) {
+                        Text("Stay")
+                    }
+                }
+            )
+        }
+
+        // Unsaved edit confirmation dialog
+        if (showUnsavedEditDialog) {
+            AlertDialog(
+                onDismissRequest = {
+                    showUnsavedEditDialog = false
+                    pendingNavigation = null
+                },
+                title = { Text("Save Changes?") },
+                text = { Text("You have unsaved changes to this page. What would you like to do?") },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            // Discard the current edit
                             isEditMode = false
                             editingContent = ""
+                            showUnsavedEditDialog = false
+                            // Execute pending navigation
+                            pendingNavigation?.invoke()
+                            pendingNavigation = null
+                        },
+                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Text("Discard & Leave")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            showUnsavedEditDialog = false
+                            pendingNavigation = null
                         }
-                        onBackPressed()
-                    },
-                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error
-                    )
-                ) {
-                    Text("Discard & Leave")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { 
-                        showUnsavedChangesDialog = false
-                        // User chose to stay - keep edit mode and content as is
+                    ) {
+                        Text("Stay")
                     }
-                ) {
-                    Text("Stay")
                 }
-            }
-        )
-    }
-    
-    // Unsaved edit confirmation dialog
-    if (showUnsavedEditDialog) {
-        AlertDialog(
-            onDismissRequest = { 
-                showUnsavedEditDialog = false
-                pendingNavigation = null
-            },
-            title = { Text("Save Changes?") },
-            text = { Text("You have unsaved changes to this page. What would you like to do?") },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        // Discard the current edit
-                        isEditMode = false
-                        editingContent = ""
-                        showUnsavedEditDialog = false
-                        // Execute pending navigation
-                        pendingNavigation?.invoke()
-                        pendingNavigation = null
-                    },
-                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error
+            )
+        }
+
+        // Delete page confirmation dialog
+        if (showDeleteConfirmation) {
+            AlertDialog(
+                onDismissRequest = { showDeleteConfirmation = false },
+                title = { Text("Delete Page?") },
+                text = {
+                    Text(
+                        if (pages.size <= 1) {
+                            "This will clear all content from this page. Are you sure?"
+                        } else {
+                            "Are you sure you want to delete page ${currentPage.pageNumber}?"
+                        }
                     )
-                ) {
-                    Text("Discard & Leave")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { 
-                        showUnsavedEditDialog = false
-                        pendingNavigation = null
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            performDeleteCurrentPage()
+                            showDeleteConfirmation = false
+                        },
+                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Text("Delete")
                     }
-                ) {
-                    Text("Stay")
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showDeleteConfirmation = false }
+                    ) {
+                        Text("Cancel")
+                    }
                 }
-            }
-        )
-    }
-    
-    // Delete page confirmation dialog
-    if (showDeleteConfirmation) {
-        AlertDialog(
-            onDismissRequest = { showDeleteConfirmation = false },
-            title = { Text("Delete Page?") },
-            text = { 
-                Text(
-                    if (pages.size <= 1) {
-                        "This will clear all content from this page. Are you sure?"
+            )
+        }
+
+        // Page input dialog
+        if (showPageInputDialog) {
+            PageInputDialog(
+                currentPage = currentPage.pageNumber,
+                totalPages = pages.size,
+                onPageSelected = { page ->
+                    if (isEditMode) {
+                        showUnsavedEditDialog = true
+                        pendingNavigation = {
+                            currentPageIndex = page - 1
+                            showPageInputDialog = false
+                        }
                     } else {
-                        "Are you sure you want to delete page ${currentPage.pageNumber}?"
+                        currentPageIndex = page - 1
+                        showPageInputDialog = false
                     }
+                },
+                onDismiss = { showPageInputDialog = false }
+            )
+        }
+
+        // Back confirmation dialog
+        if (showBackConfirmDialog) {
+            BackConfirmationDialog(
+                onAbortAndLeave = {
+                    viewModel.confirmBackWithAbort()
+                    onBackPressed()
+                },
+                onStay = {
+                    viewModel.dismissBackConfirmDialog()
+                },
+                onDismiss = {
+                    viewModel.dismissBackConfirmDialog()
+                }
+            )
+        }
+    }
+
+    @Composable
+    private fun PageInputDialog(
+        currentPage: Int,
+        totalPages: Int,
+        onPageSelected: (Int) -> Unit,
+        onDismiss: () -> Unit
+    ) {
+        var textFieldValue by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+            mutableStateOf(
+                TextFieldValue(
+                    text = currentPage.toString(),
+                    selection = TextRange(0, currentPage.toString().length)
+                )
+            )
+        }
+        val focusRequester = remember { FocusRequester() }
+
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
+        }
+
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = {
+                Text(
+                    text = "Go to Page",
+                    style = MaterialTheme.typography.headlineSmall
                 )
             },
+            text = {
+                Column {
+                    Text(
+                        text = "Enter page number (1-$totalPages):",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    TextField(
+                        value = textFieldValue,
+                        onValueChange = { newValue ->
+                            // Only allow digits
+                            if (newValue.text.all { it.isDigit() } || newValue.text.isEmpty()) {
+                                textFieldValue = newValue
+                            }
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                val page = textFieldValue.text.toIntOrNull()
+                                if (page != null && page in 1..totalPages) {
+                                    onPageSelected(page)
+                                }
+                            }
+                        ),
+                        singleLine = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .focusRequester(focusRequester)
+                    )
+                }
+            },
             confirmButton = {
                 Button(
                     onClick = {
-                        performDeleteCurrentPage()
-                        showDeleteConfirmation = false
-                    },
-                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error
-                    )
+                        val page = textFieldValue.text.toIntOrNull()
+                        if (page != null && page in 1..totalPages) {
+                            onPageSelected(page)
+                        }
+                    }
                 ) {
-                    Text("Delete")
+                    Text("Go")
                 }
             },
             dismissButton = {
-                TextButton(
-                    onClick = { showDeleteConfirmation = false }
-                ) {
+                TextButton(onClick = onDismiss) {
                     Text("Cancel")
                 }
             }
         )
     }
-    
-    // Page input dialog
-    if (showPageInputDialog) {
-        PageInputDialog(
-            currentPage = currentPage.pageNumber,
-            totalPages = pages.size,
-            onPageSelected = { page ->
-                if (isEditMode) {
-                    showUnsavedEditDialog = true
-                    pendingNavigation = {
-                        currentPageIndex = page - 1
-                        showPageInputDialog = false
-                    }
-                } else {
-                    currentPageIndex = page - 1
-                    showPageInputDialog = false
-                }
-            },
-            onDismiss = { showPageInputDialog = false }
-        )
-    }
-    
-    // Back confirmation dialog
-    if (showBackConfirmDialog) {
-        BackConfirmationDialog(
-            onAbortAndLeave = {
-                viewModel.confirmBackWithAbort()
-                onBackPressed()
-            },
-            onStay = {
-                viewModel.dismissBackConfirmDialog()
-            },
-            onDismiss = {
-                viewModel.dismissBackConfirmDialog()
-            }
-        )
-    }
-}
 
-@Composable
-private fun PageInputDialog(
-    currentPage: Int,
-    totalPages: Int,
-    onPageSelected: (Int) -> Unit,
-    onDismiss: () -> Unit
-) {
-    var textFieldValue by rememberSaveable(stateSaver = TextFieldValue.Saver) { 
-        mutableStateOf(
-            TextFieldValue(
-                text = currentPage.toString(),
-                selection = TextRange(0, currentPage.toString().length)
-            )
-        )
-    }
-    val focusRequester = remember { FocusRequester() }
-    
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
-    
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { 
-            Text(
-                text = "Go to Page",
-                style = MaterialTheme.typography.headlineSmall
-            ) 
-        },
-        text = {
-            Column {
+    @Composable
+    private fun BackConfirmationDialog(
+        onAbortAndLeave: () -> Unit,
+        onStay: () -> Unit,
+        onDismiss: () -> Unit
+    ) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = {
                 Text(
-                    text = "Enter page number (1-$totalPages):",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    text = "AI is generating response",
+                    style = MaterialTheme.typography.headlineSmall
                 )
-                TextField(
-                    value = textFieldValue,
-                    onValueChange = { newValue ->
-                        // Only allow digits
-                        if (newValue.text.all { it.isDigit() } || newValue.text.isEmpty()) {
-                            textFieldValue = newValue
-                        }
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            val page = textFieldValue.text.toIntOrNull()
-                            if (page != null && page in 1..totalPages) {
-                                onPageSelected(page)
-                            }
-                        }
-                    ),
-                    singleLine = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .focusRequester(focusRequester)
+            },
+            text = {
+                Text(
+                    text = "The AI is currently generating a response. Do you want to stop the generation and leave, or stay on this page?",
+                    style = MaterialTheme.typography.bodyMedium
                 )
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = {
-                    val page = textFieldValue.text.toIntOrNull()
-                    if (page != null && page in 1..totalPages) {
-                        onPageSelected(page)
-                    }
+            },
+            confirmButton = {
+                Button(
+                    onClick = onAbortAndLeave,
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text("Stop & Leave")
                 }
-            ) {
-                Text("Go")
+            },
+            dismissButton = {
+                TextButton(onClick = onStay) {
+                    Text("Stay")
+                }
             }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
-    )
-}
-
-@Composable
-private fun BackConfirmationDialog(
-    onAbortAndLeave: () -> Unit,
-    onStay: () -> Unit,
-    onDismiss: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { 
-            Text(
-                text = "AI is generating response",
-                style = MaterialTheme.typography.headlineSmall
-            ) 
-        },
-        text = {
-            Text(
-                text = "The AI is currently generating a response. Do you want to stop the generation and leave, or stay on this page?",
-                style = MaterialTheme.typography.bodyMedium
-            )
-        },
-        confirmButton = {
-            Button(
-                onClick = onAbortAndLeave,
-                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error
-                )
-            ) {
-                Text("Stop & Leave")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onStay) {
-                Text("Stay")
-            }
-        }
-    )
+        )
+    }
 }
 
