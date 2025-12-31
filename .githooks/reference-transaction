@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+state="${1:-}"
+[[ "$state" == "prepared" ]] || exit 0
+
+GRADLE_FILE="app/build.gradle.kts"
+TAG_GLOB="v*"
+
+extract_versioncode_from_commit() {
+  local commit="$1"
+  git show "${commit}:${GRADLE_FILE}" 2>/dev/null \
+  | sed -nE 's/^[[:space:]]*versionCode[[:space:]]*=[[:space:]]*([0-9]+).*/\1/p' \
+  | head -n1
+}
+
+while read -r old new ref; do
+  [[ "$ref" == refs/tags/* ]] || continue
+  tag="${ref#refs/tags/}"
+
+  # If this is a deletion (new is all-zeros), allow it
+  if [[ "$new" =~ ^0{40}$ ]]; then
+    continue
+  fi
+
+  # optional: only enforce for v* tags
+  [[ "$tag" == v* ]] || continue
+
+  # peel tag object -> commit (works for annotated + lightweight)
+  new_commit="$(git rev-parse -q --verify "${new}^{commit}")" || {
+    echo "❌ Can't resolve commit for tag $tag" >&2
+    exit 1
+  }
+
+  cur="$(extract_versioncode_from_commit "$new_commit")"
+  [[ -n "$cur" ]] || { echo "❌ No versionCode found in $GRADLE_FILE at $tag" >&2; exit 1; }
+
+  prev_tag="$(git tag --merged "$new_commit" --list "$TAG_GLOB" --sort=-v:refname | head -n1 || true)"
+  [[ -n "$prev_tag" ]] || exit 0  # first tag on this history
+
+  prev_commit="$(git rev-parse -q --verify "${prev_tag}^{commit}")"
+  prev="$(extract_versioncode_from_commit "$prev_commit")"
+  [[ -n "$prev" ]] || { echo "❌ No versionCode found in $GRADLE_FILE at $prev_tag" >&2; exit 1; }
+
+  if [[ "$cur" == "$prev" ]]; then
+    echo "❌ versionCode unchanged ($cur) vs previous tag $prev_tag" >&2
+    echo "❌ Bump versionCode before tagging $tag" >&2
+    exit 1
+  fi
+done
+
+exit 0
+EOF
