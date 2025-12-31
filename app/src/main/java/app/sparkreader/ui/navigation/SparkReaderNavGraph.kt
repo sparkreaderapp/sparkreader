@@ -124,6 +124,7 @@ fun SparkReaderNavHost(
   var selectedBook by remember { mutableStateOf<Book?>(null) }
   var isNavigatingForward by remember { mutableStateOf(true) }
   var bookCreatedMessage by remember { mutableStateOf<String?>(null) }
+  var settingsCalledFrom by remember { mutableStateOf<String?>(null) }
 
   // Track whether app is in foreground.
   DisposableEffect(lifecycleOwner) {
@@ -192,6 +193,7 @@ fun SparkReaderNavHost(
       onSettingsClicked = {
         isNavigatingForward = true
         bookCreatedMessage = null  // Clear message when navigating away
+        settingsCalledFrom = "home"
         showSettings = true
       },
       onDemoClicked = {
@@ -227,6 +229,7 @@ fun SparkReaderNavHost(
         onNavigateToModelManager = {
           isNavigatingForward = true
           showBookDetail = false
+          settingsCalledFrom = "bookdetail"
           showSettings = true
         }
       )
@@ -248,6 +251,7 @@ fun SparkReaderNavHost(
       },
       onNavigateToSettings = {
         isNavigatingForward = true
+        settingsCalledFrom = "importbook"
         showSettings = true
         // Don't hide import book screen so we can return to it
       },
@@ -271,6 +275,7 @@ fun SparkReaderNavHost(
       onNavigateToSettings = {
         isNavigatingForward = true
         showHelpFeedback = false
+        settingsCalledFrom = "helpfeedback"
         showSettings = true
       }
     )
@@ -302,11 +307,29 @@ fun SparkReaderNavHost(
       onNavigateBack = {
         isNavigatingForward = false
         showSettings = false
-        // If import book screen is still visible, we came from there
-        if (showImportBook) {
-          // Increment refresh key when returning from settings to force library check
-          importBookRefreshKey++
+        
+        // Navigate back to where settings was called from
+        when (settingsCalledFrom) {
+          "bookdetail" -> {
+            showBookDetail = true
+          }
+          "importbook" -> {
+            // Import book screen is still visible, just increment refresh key
+            importBookRefreshKey++
+          }
+          "helpfeedback" -> {
+            showHelpFeedback = true
+          }
+          "createbook" -> {
+            showCreateBook = true
+          }
+          "home", null -> {
+            // Default back to home (do nothing as home is default visible state)
+          }
         }
+        
+        // Clear the caller tracking
+        settingsCalledFrom = null
       },
       // Model manager is now integrated into settings
       onThemeSelectionClicked = {
@@ -315,6 +338,7 @@ fun SparkReaderNavHost(
       onImportBookClicked = {
         isNavigatingForward = true
         showSettings = false
+        settingsCalledFrom = null  // Clear caller tracking
         importBookRefreshKey++  // Increment key to force refresh
         showImportBook = true
       },
@@ -346,6 +370,7 @@ fun SparkReaderNavHost(
       onNavigateToModelManager = {
         isNavigatingForward = true
         showCreateBook = false
+        settingsCalledFrom = "createbook"
         showSettings = true
       }
     )
@@ -394,6 +419,7 @@ fun SparkReaderNavHost(
     if (!showSettings) {
       Log.d(TAG, "Navigating to settings from notification")
       isNavigatingForward = true
+      settingsCalledFrom = "notification"
       showSettings = true
     }
   } else {
@@ -408,6 +434,7 @@ fun SparkReaderNavHost(
         if (!showSettings) {
           Log.d(TAG, "Navigating to settings from deep link")
           isNavigatingForward = true
+          settingsCalledFrom = "deeplink"
           showSettings = true
         }
       } else if (data.toString().startsWith("app.sparkreader://model/")) {
