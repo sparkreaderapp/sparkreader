@@ -354,7 +354,7 @@ private fun ExpandableFaqCard(
                   val annotation = annotations.first()
                   when (annotation.tag) {
                     "SETTINGS" -> {
-                      onNavigateToSettings()
+                      onNavigateToSettings?.invoke()
                     }
                   }
                 }
@@ -498,7 +498,7 @@ private fun ExpandableFaqCard(
                       context.startActivity(intent)
                     }
                     "SETTINGS" -> {
-                      onNavigateToSettings()
+                      onNavigateToSettings?.invoke()
                     }
                   }
                 }
