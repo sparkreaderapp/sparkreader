@@ -243,7 +243,7 @@ fun AboutScreen(
                 icon = Icons.Default.LibraryBooks,
                 label = "Library",
                 onClick = {
-                  val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://sparkreader.app/library"))
+                  val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://sparkreader.app/library.html"))
                   context.startActivity(intent)
                 }
               )

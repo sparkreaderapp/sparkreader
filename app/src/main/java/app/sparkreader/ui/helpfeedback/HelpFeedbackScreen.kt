@@ -311,7 +311,7 @@ private fun ExpandableFaqCard(
               append(")\n")
               append("2. Configure ")
               
-              pushStringAnnotation(tag = "URL", annotation = "https://sparkreader.app/library")
+              pushStringAnnotation(tag = "URL", annotation = "https://sparkreader.app/library.html")
               withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
                 append("SparkReader Library")
               }
@@ -329,7 +329,7 @@ private fun ExpandableFaqCard(
               append("3. Add books into your library:\n")
               append("   • Import from the ")
               
-              pushStringAnnotation(tag = "URL", annotation = "https://sparkreader.app/library")
+              pushStringAnnotation(tag = "URL", annotation = "https://sparkreader.app/library.html")
               withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
                 append("SparkReader Library")
               }
@@ -411,7 +411,7 @@ private fun ExpandableFaqCard(
               append("• All this without leaving the app or interrupting your reading\n")
               append("• ")
               
-              pushStringAnnotation(tag = "URL", annotation = "https://sparkreader.app/library")
+              pushStringAnnotation(tag = "URL", annotation = "https://sparkreader.app/library.html")
               withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
                 append("SparkReader Library")
               }
@@ -487,7 +487,7 @@ private fun ExpandableFaqCard(
               append("The list is compiled using state-of-the-art foundational models to mitigate any chances of our human bias.\n\n")
               append("You can browse the full catalog and find out more at: ")
               
-              pushStringAnnotation(tag = "URL", annotation = "https://sparkreader.app/library")
+              pushStringAnnotation(tag = "URL", annotation = "https://sparkreader.app/library.html")
               withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
                 append("https://sparkreader.app/library")
               }
