@@ -377,15 +377,15 @@ private fun ExpandableFaqCard(
           
           FaqSlug.IS_IT_OPENSOURCE -> {
             val annotatedText = buildAnnotatedString {
-              append("Yes! SparkReader is open source. You can access the ")
+              append("Yes! SparkReader is open source. You can find it at ")
               
-              pushStringAnnotation(tag = "URL", annotation = "https://github.com/sparkreader/sparkreader")
+              pushStringAnnotation(tag = "URL", annotation = "https://github.com/sparkreaderapp/sparkreader")
               withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
-                append("source code")
+                append("our GitHub repository")
               }
               pop()
               
-              append(" and contribute to the project.")
+              append(" and contribute to the project! Pull requests are welcome!")
             }
             
             ClickableText(
@@ -452,7 +452,7 @@ private fun ExpandableFaqCard(
               append(" only\n")
               append("• Bug reports - ")
               
-              pushStringAnnotation(tag = "URL", annotation = "https://github.com/sparkreader/sparkreader/issues")
+              pushStringAnnotation(tag = "URL", annotation = "https://github.com/sparkreaderapp/sparkreader/issues")
               withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
                 append("GitHub")
               }
@@ -468,7 +468,7 @@ private fun ExpandableFaqCard(
               
               append("\n• Feature requests - ")
               
-              pushStringAnnotation(tag = "URL", annotation = "https://github.com/sparkreader/sparkreader/issues/new")
+              pushStringAnnotation(tag = "URL", annotation = "https://github.com/sparkreaderapp/sparkreader/issues/new")
               withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
                 append("GitHub")
               }
