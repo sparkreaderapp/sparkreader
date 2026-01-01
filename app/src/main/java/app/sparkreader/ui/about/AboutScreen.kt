@@ -68,6 +68,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -141,22 +142,13 @@ fun AboutScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
           ) {
-            // App icon placeholder
-            Surface(
-              modifier = Modifier
-                .size(80.dp)
-                .clip(CircleShape),
-              color = MaterialTheme.colorScheme.primary
-            ) {
-              Icon(
-                imageVector = Icons.Default.Book,
-                contentDescription = null,
-                modifier = Modifier
-                  .padding(16.dp)
-                  .fillMaxSize(),
-                tint = MaterialTheme.colorScheme.onPrimary
-              )
-            }
+            // App logo
+            Icon(
+              painter = painterResource(if (isDarkTheme()) R.drawable.logo_dark else R.drawable.logo_light),
+              contentDescription = "SparkReader Logo",
+              tint = Color.Unspecified,
+              modifier = Modifier.size(80.dp)
+            )
             
             Spacer(modifier = Modifier.height(16.dp))
             
@@ -493,6 +485,16 @@ private fun InfoRow(
       fontWeight = FontWeight.Medium
     )
   }
+}
+
+/**
+ * Composable function to determine if the current theme is dark.
+ *
+ * @return true if the current theme is dark, false otherwise
+ */
+@Composable
+fun isDarkTheme(): Boolean {
+  return MaterialTheme.colorScheme.background.luminance() < 0.5
 }
 
 @Composable
