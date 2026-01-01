@@ -69,9 +69,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.ui.graphics.Color
 
+enum class FaqSlug {
+  GETTING_STARTED,
+  WHAT_IS_DIFFERENT,
+  CHANGE_MODEL,
+  CONTEXTUAL_EXPLANATION,
+  WHAT_BOOKS_IN_LIBRARY,
+  IS_IT_OPENSOURCE,
+  DISCUSS_MORE
+}
+
 data class FaqItem(
   val question: String,
-  val slug: String,
+  val slug: FaqSlug,
   val answer: String
 )
 
@@ -87,23 +97,23 @@ fun HelpFeedbackScreen(
   val faqItems = listOf(
     FaqItem(
       question = "Getting Started",
-      slug = "getting-started",
+      slug = FaqSlug.GETTING_STARTED,
       answer = ""
     ),
   
     FaqItem(
       question = "What makes SparkReader different?",
-      slug = "what-is-different",
+      slug = FaqSlug.WHAT_IS_DIFFERENT,
       answer = ""
     ),
     FaqItem(
       question = "How do I configure or change the AI model?",
-      slug = "change-model",
+      slug = FaqSlug.CHANGE_MODEL,
       answer = ""
     ),
     FaqItem(
       question = "How does the contextual explanation work?",
-      slug = "contextual-explanation",
+      slug = FaqSlug.CONTEXTUAL_EXPLANATION,
       answer = """Unlike a traditional dictionary, SparkReader provides contextual explanations:
 
 • By selecting any piece of text while reading, two context menu buttons appear automatically
@@ -113,17 +123,17 @@ You can also ask follow-up questions in a conventional chat interface."""
     ),
     FaqItem(
       question = "What books are included in SparkReader Library?",
-      slug = "what-books-in-library",
+      slug = FaqSlug.WHAT_BOOKS_IN_LIBRARY,
       answer = ""
     ),
     FaqItem(
       question = "Is SparkReader open source?",
-      slug = "is-it-opensource",
+      slug = FaqSlug.IS_IT_OPENSOURCE,
       answer = ""
     ),
     FaqItem(
       question = "Where can I discuss books or report issues?",
-      slug = "discuss-more",
+      slug = FaqSlug.DISCUSS_MORE,
       answer = ""
     )
   )
@@ -292,8 +302,8 @@ private fun ExpandableFaqCard(
       if (expanded) {
         Spacer(modifier = Modifier.height(12.dp))
         
-        when {
-          faq.question == "Getting Started" -> {
+        when (faq.slug) {
+          FaqSlug.GETTING_STARTED -> {
             val annotatedText = buildAnnotatedString {
               append("To get started with SparkReader:\n\n")
               append("1. Configure a local LLM (go to ")
@@ -369,7 +379,7 @@ private fun ExpandableFaqCard(
             )
           }
           
-          faq.question == "Is SparkReader open source?" -> {
+          FaqSlug.IS_IT_OPENSOURCE -> {
             val annotatedText = buildAnnotatedString {
               append("Yes! Both the app and the library are open source. You can:\n\n")
               append("• Submit pull requests (contributions welcome!)\n")
@@ -401,7 +411,7 @@ private fun ExpandableFaqCard(
             )
           }
           
-          faq.question == "What makes SparkReader different?" -> {
+          FaqSlug.WHAT_IS_DIFFERENT -> {
             val annotatedText = buildAnnotatedString {
               append("SparkReader combines:\n\n")
               append("• Contextual AI explanations (not just definitions) for dense, rare, ambiguous, or archaic vocabulary, jargon, and cultural references\n")
@@ -435,7 +445,7 @@ private fun ExpandableFaqCard(
             )
           }
           
-          faq.question == "Where can I discuss books or report issues?" -> {
+          FaqSlug.DISCUSS_MORE -> {
             val annotatedText = buildAnnotatedString {
               append("We have different channels for different types of discussions:\n\n")
               append("• Book discussions (additions, removals, etc.) - ")
@@ -498,7 +508,7 @@ private fun ExpandableFaqCard(
             )
           }
           
-          faq.question.contains("What books are included", ignoreCase = true) -> {
+          FaqSlug.WHAT_BOOKS_IN_LIBRARY -> {
             val annotatedText = buildAnnotatedString {
               append("We have endeavored to include seminal public domain books spanning the entirety of human history, from ancient times to the present, and across diverse world regions.\n")
               append("Our selection covers a wide range of disciplines, including philosophy, religion, science, and law, as well as literary fiction genres such as crime, thriller, and mystery, and non-fiction categories such as travel writing and biographies.\n\n")
@@ -528,7 +538,7 @@ private fun ExpandableFaqCard(
             )
           }
           
-          faq.question.contains("model", ignoreCase = true) && onNavigateToSettings != null -> {
+          FaqSlug.CHANGE_MODEL -> {
             val annotatedText = buildAnnotatedString {
               append("You can view and change the model at any time through ")
               
