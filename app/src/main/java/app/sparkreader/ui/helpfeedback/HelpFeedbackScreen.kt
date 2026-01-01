@@ -116,6 +116,8 @@ You can also ask follow-up questions in a conventional chat interface."""
       answer = """We have endeavored to include seminal public domain books spanning the entirety of human history, from ancient times to the present, and across diverse world regions.
 Our selection covers a wide range of disciplines, including philosophy, religion, science, and law, as well as literary fiction genres such as crime, thriller, and mystery, and non-fiction categories such as travel writing and biographies.
 
+The list is compiled using state-of-the-art foundational models to mitigate any chances of our human bias.
+
 You can browse the full catalog and find out more at: https://sparkreader.app/library"""
     ),
     FaqItem(
@@ -485,6 +487,36 @@ private fun ExpandableFaqCard(
               pop()
               
               append("\n\nBook-related discussions are solely performed on Discord to keep our community engaged and allow for real-time conversations about library content.")
+            }
+            
+            ClickableText(
+              text = annotatedText,
+              style = MaterialTheme.typography.bodyMedium.copy(
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+              ),
+              onClick = { offset ->
+                val annotations = annotatedText.getStringAnnotations(tag = "URL", start = offset, end = offset)
+                if (annotations.isNotEmpty()) {
+                  val annotation = annotations.first()
+                  val intent = Intent(Intent.ACTION_VIEW, Uri.parse(annotation.item))
+                  context.startActivity(intent)
+                }
+              }
+            )
+          }
+          
+          faq.question.contains("What books are included", ignoreCase = true) -> {
+            val annotatedText = buildAnnotatedString {
+              append("We have endeavored to include seminal public domain books spanning the entirety of human history, from ancient times to the present, and across diverse world regions.\n")
+              append("Our selection covers a wide range of disciplines, including philosophy, religion, science, and law, as well as literary fiction genres such as crime, thriller, and mystery, and non-fiction categories such as travel writing and biographies.\n\n")
+              append("The list is compiled using state-of-the-art foundational models to mitigate any chances of our human bias.\n\n")
+              append("You can browse the full catalog and find out more at: ")
+              
+              pushStringAnnotation(tag = "URL", annotation = "https://sparkreader.app/library")
+              withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
+                append("https://sparkreader.app/library")
+              }
+              pop()
             }
             
             ClickableText(
