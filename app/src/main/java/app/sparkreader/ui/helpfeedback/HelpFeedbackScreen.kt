@@ -377,7 +377,7 @@ private fun ExpandableFaqCard(
           
           FaqSlug.IS_IT_OPENSOURCE -> {
             val annotatedText = buildAnnotatedString {
-              append("Yes! Both the app and the library are open source. You can:\n\n")
+              append("Yes! The app is open source. You can:\n\n")
               append("• Submit pull requests (contributions welcome!)\n")
               append("• Access the ")
               
