@@ -377,9 +377,7 @@ private fun ExpandableFaqCard(
           
           FaqSlug.IS_IT_OPENSOURCE -> {
             val annotatedText = buildAnnotatedString {
-              append("Yes! The app is open source. You can:\n\n")
-              append("• Submit pull requests (contributions welcome!)\n")
-              append("• Access the ")
+              append("Yes! SparkReader is open source. You can access the ")
               
               pushStringAnnotation(tag = "URL", annotation = "https://github.com/sparkreader/sparkreader")
               withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
@@ -387,8 +385,7 @@ private fun ExpandableFaqCard(
               }
               pop()
               
-              append(" and contribute to the project\n")
-              append("• Join our community of contributors")
+              append(" and contribute to the project.")
             }
             
             ClickableText(
