@@ -32,8 +32,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
@@ -57,6 +59,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -80,6 +85,7 @@ import androidx.compose.ui.unit.dp
 import app.sparkreader.BuildConfig
 import app.sparkreader.R
 import app.sparkreader.ui.settings.SettingsViewModel
+import java.io.IOException
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,6 +97,11 @@ fun AboutScreen(
   val context = LocalContext.current
   val libraryState by settingsViewModel.libraryState.collectAsState()
   
+  // State for license dialog
+  var showLicenseDialog by remember { mutableStateOf(false) }
+  var selectedLicense by remember { mutableStateOf("") }
+  var licenseContent by remember { mutableStateOf("") }
+  
   // Refresh library state when screen becomes visible
   LaunchedEffect(Unit) {
     settingsViewModel.refreshLibraryState()
@@ -100,6 +111,20 @@ fun AboutScreen(
     libraryState.currentVersion
   } else {
     "Not downloaded"
+  }
+  
+  // Function to load license content
+  fun loadLicense(licenseFile: String, licenseName: String) {
+    try {
+      val inputStream = context.assets.open("licenses/$licenseFile")
+      licenseContent = inputStream.bufferedReader().use { it.readText() }
+      selectedLicense = licenseName
+      showLicenseDialog = true
+    } catch (e: IOException) {
+      licenseContent = "Error loading license: ${e.message}"
+      selectedLicense = licenseName
+      showLicenseDialog = true
+    }
   }
   
   Scaffold(
@@ -268,19 +293,25 @@ fun AboutScreen(
               AcknowledgmentItem(
                 title = "Project Gutenberg",
                 description = "Most books in our library are sourced from Project Gutenberg's extensive collection of public domain works.",
-                url = "https://www.gutenberg.org/"
+                url = "https://www.gutenberg.org/",
+                licenseKey = "PROJECT-GUTENBERG-TERMS.txt",
+                onViewLicense = { licenseFile, licenseName -> loadLicense(licenseFile, licenseName) }
               )
               
               AcknowledgmentItem(
                 title = "Google Edge Gallery",
                 description = "This app is built upon the Google Edge Gallery framework.",
-                url = "https://github.com/google/edge-gallery"
+                url = "https://github.com/google/edge-gallery",
+                licenseKey = "APACHE-2.0.txt",
+                onViewLicense = { licenseFile, licenseName -> loadLicense(licenseFile, licenseName) }
               )
 
               AcknowledgmentItem(
                 title = "Gemma 3n",
                 description = "Google's multimodal AI model powering contextual explanations and OCR capabilities.",
-                url = "https://deepmind.google/models/gemma/gemma-3n/"
+                url = "https://deepmind.google/models/gemma/gemma-3n/",
+                licenseKey = "GEMMA-TERMS.txt",
+                onViewLicense = { licenseFile, licenseName -> loadLicense(licenseFile, licenseName) }
               )
               
 //              AcknowledgmentItem(
@@ -400,6 +431,15 @@ fun AboutScreen(
         Spacer(modifier = Modifier.height(16.dp))
       }
     }
+    
+    // License Dialog
+    if (showLicenseDialog) {
+      LicenseDialog(
+        licenseName = selectedLicense,
+        licenseContent = licenseContent,
+        onDismiss = { showLicenseDialog = false }
+      )
+    }
   }
 }
 
@@ -512,6 +552,8 @@ private fun AcknowledgmentItem(
   title: String,
   description: String,
   url: String? = null,
+  licenseKey: String? = null,
+  onViewLicense: ((String, String) -> Unit)? = null,
   modifier: Modifier = Modifier
 ) {
   val context = LocalContext.current
@@ -519,20 +561,21 @@ private fun AcknowledgmentItem(
   Column(
     modifier = modifier
       .fillMaxWidth()
-      .then(
-        if (url != null) {
-          Modifier.clickable {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-            context.startActivity(intent)
-          }
-        } else {
-          Modifier
-        }
-      )
       .padding(vertical = 8.dp, horizontal = 4.dp)
   ) {
     Row(
-      verticalAlignment = Alignment.CenterVertically
+      verticalAlignment = Alignment.CenterVertically,
+      modifier = Modifier
+        .then(
+          if (url != null) {
+            Modifier.clickable {
+              val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+              context.startActivity(intent)
+            }
+          } else {
+            Modifier
+          }
+        )
     ) {
       Text(
         text = title,
@@ -556,5 +599,67 @@ private fun AcknowledgmentItem(
       style = MaterialTheme.typography.bodySmall,
       color = MaterialTheme.colorScheme.onSurfaceVariant
     )
+    
+    // License chip
+    if (licenseKey != null && onViewLicense != null) {
+      Spacer(modifier = Modifier.height(8.dp))
+      FilterChip(
+        onClick = { onViewLicense(licenseKey, "$title License") },
+        label = { 
+          Text(
+            text = "View License",
+            style = MaterialTheme.typography.bodySmall
+          ) 
+        },
+        selected = false,
+        modifier = Modifier.height(32.dp)
+      )
+    }
   }
+}
+
+@Composable
+private fun LicenseDialog(
+  licenseName: String,
+  licenseContent: String,
+  onDismiss: () -> Unit
+) {
+  AlertDialog(
+    onDismissRequest = onDismiss,
+    title = {
+      Text(
+        text = licenseName,
+        style = MaterialTheme.typography.titleLarge,
+        fontWeight = FontWeight.Bold
+      )
+    },
+    text = {
+      Column(
+        modifier = Modifier
+          .fillMaxWidth()
+          .height(400.dp)
+      ) {
+        Surface(
+          modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
+          color = MaterialTheme.colorScheme.surfaceVariant,
+          shape = RoundedCornerShape(8.dp)
+        ) {
+          Text(
+            text = licenseContent,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(16.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+          )
+        }
+      }
+    },
+    confirmButton = {
+      TextButton(onClick = onDismiss) {
+        Text("Close")
+      }
+    },
+    modifier = Modifier.fillMaxWidth(0.95f)
+  )
 }
