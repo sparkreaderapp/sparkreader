@@ -40,7 +40,7 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Code
-import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.LibraryBooks
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Update
@@ -196,7 +196,7 @@ fun AboutScreen(
               horizontalArrangement = Arrangement.SpaceEvenly
             ) {
               CommunityButton(
-                icon = Icons.Default.BugReport,
+                icon = Icons.Default.Code,
                 label = "App",
                 onClick = {
                   val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sparkreaderapp/sparkreader"))
@@ -205,7 +205,7 @@ fun AboutScreen(
               )
               
               CommunityButton(
-                icon = Icons.Default.Lightbulb,
+                icon = Icons.Default.LibraryBooks,
                 label = "Library",
                 onClick = {
                   val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sparkreaderapp/sparkreader-library"))
