@@ -42,6 +42,7 @@ import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.LibraryBooks
 import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.Card
@@ -173,7 +174,7 @@ fun AboutScreen(
         )
       }
       
-      // Community Links
+      // Links & Resources
       item {
         Card(
           modifier = Modifier
@@ -185,7 +186,7 @@ fun AboutScreen(
             modifier = Modifier.padding(16.dp)
           ) {
             Text(
-              text = "Community",
+              text = "Links & Resources",
               style = MaterialTheme.typography.titleMedium,
               fontWeight = FontWeight.Bold,
               modifier = Modifier.padding(bottom = 12.dp)
@@ -195,6 +196,15 @@ fun AboutScreen(
               modifier = Modifier.fillMaxWidth(),
               horizontalArrangement = Arrangement.SpaceEvenly
             ) {
+              CommunityButton(
+                icon = Icons.Default.Language,
+                label = "Website",
+                onClick = {
+                  val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://sparkreader.app"))
+                  context.startActivity(intent)
+                }
+              )
+              
               CommunityButton(
                 icon = Icons.Default.Code,
                 label = "App",
