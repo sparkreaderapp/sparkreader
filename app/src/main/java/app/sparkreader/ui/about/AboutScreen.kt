@@ -153,7 +153,7 @@ fun AboutScreen(
             )
             
             Text(
-              text = "Read with AI-powered understanding",
+              text = "Offline AI. Limitless Learning. In Your Hand.",
               style = MaterialTheme.typography.bodyMedium,
               color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -186,7 +186,7 @@ fun AboutScreen(
             modifier = Modifier.padding(16.dp)
           ) {
             Text(
-              text = "Links & Resources",
+              text = "Ecosystem",
               style = MaterialTheme.typography.titleMedium,
               fontWeight = FontWeight.Bold,
               modifier = Modifier.padding(bottom = 12.dp)
@@ -218,7 +218,7 @@ fun AboutScreen(
                 icon = Icons.Default.LibraryBooks,
                 label = "Library",
                 onClick = {
-                  val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sparkreaderapp/sparkreader-library"))
+                  val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://sparkreader.app/library"))
                   context.startActivity(intent)
                 }
               )
@@ -236,6 +236,17 @@ fun AboutScreen(
               verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
               Text(
+                text = "SparkReader App",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold
+              )
+              Text(
+                text = "© 2025 The SparkReader Creator",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+              )
+
+              Text(
                 text = "SparkReader Library Compilation",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold
@@ -249,15 +260,9 @@ fun AboutScreen(
               Divider(modifier = Modifier.padding(vertical = 8.dp))
               
               Text(
-                text = "Special Thanks",
+                text = "Credits",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold
-              )
-              
-              AcknowledgmentItem(
-                title = "Gemma 3n",
-                description = "Google's multimodal AI model powering contextual explanations and OCR capabilities.",
-                url = "https://deepmind.google/models/gemma/gemma-3n/"
               )
               
               AcknowledgmentItem(
@@ -271,113 +276,90 @@ fun AboutScreen(
                 description = "This app is built upon the Google Edge Gallery framework.",
                 url = "https://github.com/google/edge-gallery"
               )
-              
+
               AcknowledgmentItem(
-                title = "Aider",
-                description = "AI-powered coding assistant used in developing this application.",
-                url = "https://aider.chat/"
-              )
-            }
-          }
-        )
-      }
-      
-      // Open Source Licenses
-      item {
-        Card(
-          modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .clickable {
-              // TODO: Navigate to licenses screen
-            },
-          elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-        ) {
-          Row(
-            modifier = Modifier
-              .fillMaxWidth()
-              .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-          ) {
-            Icon(
-              imageVector = Icons.Default.Description,
-              contentDescription = null,
-              tint = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(modifier = Modifier.weight(1f)) {
-              Text(
-                text = "Open Source Licenses",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-              )
-              Text(
-                text = "View licenses for open source software",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-              )
-            }
-          }
-        }
-      }
-      
-      // Privacy Policy
-      item {
-        InfoCard(
-          icon = Icons.Default.Lock,
-          title = "Privacy Policy",
-          content = {
-            Column(
-              verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-              Text(
-                text = "Your Privacy Matters",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Bold
+                title = "Gemma 3n",
+                description = "Google's multimodal AI model powering contextual explanations and OCR capabilities.",
+                url = "https://deepmind.google/models/gemma/gemma-3n/"
               )
               
-              Text(
-                text = "• We don't collect or store personal data\n" +
-                      "• No user information is sent over the internet\n" +
-                      "• All processing happens locally on your device\n" +
-                      "• Your reading history stays private",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-              )
+//              AcknowledgmentItem(
+//                title = "Aider",
+//                description = "AI-powered coding assistant used in developing this application.",
+//                url = "https://aider.chat/"
+//              )
             }
           }
         )
       }
       
-      // Updates
-      item {
-        InfoCard(
-          icon = Icons.Default.Update,
-          title = "Updates",
-          content = {
-            Column(
-              verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-              Text(
-                text = "How Updates Work",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Bold
-              )
-              
-              Text(
-                text = "Updates are handled through a privacy-preserving reverse pull system:\n\n" +
-                      "• Update notifications are published to GitHub\n" +
-                      "• Your app checks for updates without revealing device info\n" +
-                      "• Only relevant updates are shown based on your version\n" +
-                      "• No tracking or analytics involved",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-              )
-            }
-          }
-        )
-      }
+//      // Open Source Licenses
+//      item {
+//        Card(
+//          modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(horizontal = 16.dp)
+//            .clickable {
+//              // TODO: Navigate to licenses screen
+//            },
+//          elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+//        ) {
+//          Row(
+//            modifier = Modifier
+//              .fillMaxWidth()
+//              .padding(16.dp),
+//            verticalAlignment = Alignment.CenterVertically
+//          ) {
+//            Icon(
+//              imageVector = Icons.Default.Description,
+//              contentDescription = null,
+//              tint = MaterialTheme.colorScheme.primary
+//            )
+//            Spacer(modifier = Modifier.width(16.dp))
+//            Column(modifier = Modifier.weight(1f)) {
+//              Text(
+//                text = "Open Source Licenses",
+//                style = MaterialTheme.typography.titleMedium,
+//                fontWeight = FontWeight.Bold
+//              )
+//              Text(
+//                text = "View licenses for open source software",
+//                style = MaterialTheme.typography.bodySmall,
+//                color = MaterialTheme.colorScheme.onSurfaceVariant
+//              )
+//            }
+//          }
+//        }
+//      }
       
+//      // Privacy Policy
+//      item {
+//        InfoCard(
+//          icon = Icons.Default.Lock,
+//          title = "Privacy Policy",
+//          content = {
+//            Column(
+//              verticalArrangement = Arrangement.spacedBy(8.dp)
+//            ) {
+//              Text(
+//                text = "Your Privacy Matters",
+//                style = MaterialTheme.typography.bodyMedium,
+//                fontWeight = FontWeight.Bold
+//              )
+//
+//              Text(
+//                text = "• We don't collect or store personal data\n" +
+//                      "• No user information is sent over the internet\n" +
+//                      "• All processing happens locally on your device\n" +
+//                      "• Your reading history stays private",
+//                style = MaterialTheme.typography.bodySmall,
+//                color = MaterialTheme.colorScheme.onSurfaceVariant
+//              )
+//            }
+//          }
+//        )
+//      }
+
       // Terms of Use
       item {
         InfoCard(
@@ -393,26 +375,22 @@ fun AboutScreen(
               )
               
               Text(
-                text = "1. Use the app for personal, non-commercial purposes\n" +
-                      "2. Respect copyright laws when importing content\n" +
-                      "3. Not redistribute copyrighted materials\n" +
-                      "4. Acknowledge that AI explanations are for reference only\n" +
-                      "5. Understand that the app is provided \"as is\" without warranties",
+                text = """By using SparkReader, you agree to use the application for personal, non-commercial purposes and to comply with all applicable laws. Understand that Gemma is provided under and subject to the Gemma Terms of Use found at ai.google.dev/gemma/terms. You acknowledge that AI-generated explanations are provided for informational purposes only and may not always be accurate or complete. SparkReader is provided “as is,” without warranties of any kind, and the creator assumes no responsibility for decisions or outcomes resulting from the use of the app.""",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
               )
               
               Spacer(modifier = Modifier.height(8.dp))
               
-              Text(
-                text = "Full terms available at: sparkreader.app/terms",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.clickable {
-                  val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://sparkreader.app/terms"))
-                  context.startActivity(intent)
-                }
-              )
+//              Text(
+//                text = "Full terms available at: sparkreader.app/terms",
+//                style = MaterialTheme.typography.bodySmall,
+//                color = MaterialTheme.colorScheme.primary,
+//                modifier = Modifier.clickable {
+//                  val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://sparkreader.app/terms"))
+//                  context.startActivity(intent)
+//                }
+//              )
             }
           }
         )
