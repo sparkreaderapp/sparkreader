@@ -198,15 +198,14 @@ fun HelpFeedbackScreen(
         )
       }
       
-      // Report a Bug - Discord
+      // Book discussions and suggestions
       item {
         ActionCard(
-          icon = Icons.Default.Chat,
-          title = "Join our Discord",
-          subtitle = "Get help and discuss with the community",
+          icon = Icons.Default.Lightbulb,
+          title = "Book Discussions & Suggestions",
+          subtitle = "Suggest books or discuss library content",
           onClick = {
-            // TODO: Replace with actual Discord invite link
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://discord.gg/sparkreader"))
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sparkreaderapp/sparkreader-library"))
             context.startActivity(intent)
           }
         )
@@ -440,49 +439,22 @@ private fun ExpandableFaqCard(
           
           FaqSlug.DISCUSS_MORE -> {
             val annotatedText = buildAnnotatedString {
-              append("We have different channels for different types of discussions:\n\n")
-              append("• Book discussions (additions, removals, etc.) - ")
+              append("We have different repositories for different types of discussions:\n\n")
+              append("• Book discussions and suggestions - ")
               
-              pushStringAnnotation(tag = "URL", annotation = "https://discord.gg/sparkreader")
+              pushStringAnnotation(tag = "URL", annotation = "https://github.com/sparkreaderapp/sparkreader-library")
               withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
-                append("Discord")
+                append("SparkReader Library repository")
               }
               pop()
               
-              append(" only\n")
-              append("• Bug reports - ")
+              append("\n• Bug reports and feature requests - ")
               
               pushStringAnnotation(tag = "URL", annotation = "https://github.com/sparkreaderapp/sparkreader/issues")
               withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
-                append("GitHub")
+                append("SparkReader app repository")
               }
               pop()
-              
-              append(" or ")
-              
-              pushStringAnnotation(tag = "URL", annotation = "https://discord.gg/sparkreader")
-              withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
-                append("Discord")
-              }
-              pop()
-              
-              append("\n• Feature requests - ")
-              
-              pushStringAnnotation(tag = "URL", annotation = "https://github.com/sparkreaderapp/sparkreader/issues/new")
-              withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
-                append("GitHub")
-              }
-              pop()
-              
-              append(" or ")
-              
-              pushStringAnnotation(tag = "URL", annotation = "https://discord.gg/sparkreader")
-              withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
-                append("Discord")
-              }
-              pop()
-              
-              append("\n\nBook-related discussions are solely performed on Discord to keep our community engaged and allow for real-time conversations about library content.")
             }
             
             ClickableText(
