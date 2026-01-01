@@ -95,7 +95,12 @@ fun HelpFeedbackScreen(
     ),
     FaqItem(
       question = "How do I configure or change the AI model?",
-      answer = """go to Settings > Model manager. There you can download, delete, and set the default model."""
+      answer = """You can view and change the model at any time through Settings > Model manager. There you can download, delete, and set the default model.
+
+The model enables:
+• Contextual explanations for text (not just definitions) for dense, rare, ambiguous, or archaic vocabulary, jargon, and cultural references
+• Advanced language understanding
+• All features work fully offline, with no Internet connection required and no data ever leaving your device"""
     ),
     FaqItem(
       question = "How does the contextual explanation work?",
@@ -500,15 +505,6 @@ private fun ExpandableFaqCard(
           
           faq.question.contains("model", ignoreCase = true) && onNavigateToSettings != null -> {
             val annotatedText = buildAnnotatedString {
-              append("The ")
-              
-              pushStringAnnotation(tag = "URL", annotation = "https://deepmind.google/models/gemma/gemma-3n/")
-              withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
-                append("Gemma 3n model")
-              }
-              pop()
-              
-              append(" should have been automatically configured when you first started the app.\n\n")
               append("You can view and change the model at any time through ")
               
               pushStringAnnotation(tag = "SETTINGS", annotation = "settings")
@@ -517,11 +513,11 @@ private fun ExpandableFaqCard(
               }
               pop()
               
-              append(". The model enables:\n")
-              append("• OCR for importing images\n")
-              append("• Contextual explanations for text\n")
-              append("• Advanced language understanding\n\n")
-              append("To change models, go to Settings from the menu.")
+              append(" > Model manager. There you can download, delete, and set the default model.\n\n")
+              append("The model enables:\n")
+              append("• Contextual explanations for text (not just definitions) for dense, rare, ambiguous, or archaic vocabulary, jargon, and cultural references\n")
+              append("• Advanced language understanding\n")
+              append("• All features work fully offline, with no Internet connection required and no data ever leaving your device")
             }
             
             ClickableText(
