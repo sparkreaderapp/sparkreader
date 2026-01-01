@@ -214,7 +214,7 @@ fun AboutScreen(
                 icon = Icons.Default.Code,
                 label = "GitHub",
                 onClick = {
-                  val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sparkreader/sparkreader"))
+                  val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sparkreaderapp/sparkreader"))
                   context.startActivity(intent)
                 }
               )
