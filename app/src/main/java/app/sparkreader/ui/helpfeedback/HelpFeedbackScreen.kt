@@ -352,6 +352,7 @@ private fun ExpandableFaqCard(
               withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)) {
                 append("(coming later)")
               }
+              append(".")
               
               append("\n\n4. Once a book is added to your library, tap on it to start reading!")
             }
@@ -426,7 +427,7 @@ private fun ExpandableFaqCard(
               pop()
               
               append(", a curated public domain book library\n")
-              append("• All these features work fully offline, with no Internet connection required and no data ever leaving your device")
+              append("• All these features work fully offline, with no Internet connection required and no data ever leaving your device.")
             }
             
             ClickableText(
@@ -548,11 +549,11 @@ private fun ExpandableFaqCard(
               }
               pop()
               
-              append(" > There you can download, delete, and set the default model.\n\n")
+              append(". There you can download, delete, and set the default model.\n\n")
               append("The model enables:\n")
               append("• Contextual explanations for text (not just definitions) for dense, rare, ambiguous, or archaic vocabulary, jargon, and cultural references\n")
               append("• Advanced language understanding\n")
-              append("• All features work fully offline, with no Internet connection required and no data ever leaving your device")
+              append("• All features work fully offline, with no Internet connection required and no data ever leaving your device.")
             }
             
             ClickableText(
