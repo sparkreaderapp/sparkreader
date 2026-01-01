@@ -95,7 +95,7 @@ fun HelpFeedbackScreen(
     ),
     FaqItem(
       question = "How do I configure or change the AI model?",
-      answer = """You can view and change the model at any time through Settings > Model manager. There you can download, delete, and set the default model.
+      answer = """You can view and change the model at any time through Settings. There you can download, delete, and set the default model.
 
 The model enables:
 • Contextual explanations for text (not just definitions) for dense, rare, ambiguous, or archaic vocabulary, jargon, and cultural references
@@ -113,10 +113,10 @@ You can also ask follow-up questions in a conventional chat interface."""
     ),
     FaqItem(
       question = "What books are included in SparkReader Library?",
-      answer = """We have endeavored to include seminal public domain books spanning the entirety of human history—from ancient times to the present—and across diverse world regions.
+      answer = """We have endeavored to include seminal public domain books spanning the entirety of human history, from ancient times to the present, and across diverse world regions.
 Our selection covers a wide range of disciplines, including philosophy, religion, science, and law, as well as literary fiction genres such as crime, thriller, and mystery, and non-fiction categories such as travel writing and biographies.
 
-You can browse the full catalog at: https://sparkreader.app/library"""
+You can browse the full catalog and find out more at: https://sparkreader.app/library"""
     ),
     FaqItem(
       question = "Is SparkReader open source?",
@@ -513,7 +513,7 @@ private fun ExpandableFaqCard(
               }
               pop()
               
-              append(" > Model manager. There you can download, delete, and set the default model.\n\n")
+              append(" > There you can download, delete, and set the default model.\n\n")
               append("The model enables:\n")
               append("• Contextual explanations for text (not just definitions) for dense, rare, ambiguous, or archaic vocabulary, jargon, and cultural references\n")
               append("• Advanced language understanding\n")
