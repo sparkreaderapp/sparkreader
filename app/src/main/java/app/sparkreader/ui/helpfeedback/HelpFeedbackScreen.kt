@@ -71,6 +71,7 @@ import androidx.compose.ui.graphics.Color
 
 data class FaqItem(
   val question: String,
+  val slug: String,
   val answer: String
 )
 
@@ -86,24 +87,23 @@ fun HelpFeedbackScreen(
   val faqItems = listOf(
     FaqItem(
       question = "Getting Started",
+      slug = "getting-started",
       answer = ""
     ),
   
     FaqItem(
       question = "What makes SparkReader different?",
+      slug = "what-is-different",
       answer = ""
     ),
     FaqItem(
       question = "How do I configure or change the AI model?",
-      answer = """You can view and change the model at any time through Settings. There you can download, delete, and set the default model.
-
-The model enables:
-• Contextual explanations for text (not just definitions) for dense, rare, ambiguous, or archaic vocabulary, jargon, and cultural references
-• Advanced language understanding
-• All features work fully offline, with no Internet connection required and no data ever leaving your device"""
+      slug = "change-model",
+      answer = ""
     ),
     FaqItem(
       question = "How does the contextual explanation work?",
+      slug = "contextual-explanation",
       answer = """Unlike a traditional dictionary, SparkReader provides contextual explanations:
 
 • By selecting any piece of text while reading, two context menu buttons appear automatically
@@ -113,25 +113,18 @@ You can also ask follow-up questions in a conventional chat interface."""
     ),
     FaqItem(
       question = "What books are included in SparkReader Library?",
-      answer = """We have endeavored to include seminal public domain books spanning the entirety of human history, from ancient times to the present, and across diverse world regions.
-Our selection covers a wide range of disciplines, including philosophy, religion, science, and law, as well as literary fiction genres such as crime, thriller, and mystery, and non-fiction categories such as travel writing and biographies.
-
-The list is compiled using state-of-the-art foundational models to mitigate any chances of our human bias.
-
-You can browse the full catalog and find out more at: https://sparkreader.app/library"""
+      slug = "what-books-in-library",
+      answer = ""
     ),
     FaqItem(
       question = "Is SparkReader open source?",
-      answer = """Yes! Both the app and the library are open source. Contributions are welcome—whether as a one-time pull request or by joining as a regular collaborator."""
+      slug = "is-it-opensource",
+      answer = ""
     ),
     FaqItem(
       question = "Where can I discuss books or report issues?",
-      answer = """We have different channels for different types of discussions:
-
-• Book discussions (additions, removals, etc.) - Discord only
-• Bug reports - GitHub or Discord
-• Feature requests - GitHub or Discord
-"""
+      slug = "discuss-more",
+      answer = ""
     )
   )
 
