@@ -440,19 +440,18 @@ private fun ExpandableFaqCard(
           FaqSlug.DISCUSS_MORE -> {
             val annotatedText = buildAnnotatedString {
               append("We have different repositories for different types of discussions:\n\n")
-              append("• Book discussions and suggestions - ")
-              
-              pushStringAnnotation(tag = "URL", annotation = "https://github.com/sparkreaderapp/sparkreader-library")
-              withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
-                append("SparkReader Library repository")
-              }
-              pop()
-              
-              append("\n• Bug reports and feature requests - ")
-              
+
+              append("• For the App (bug reports and feature requests): ")
               pushStringAnnotation(tag = "URL", annotation = "https://github.com/sparkreaderapp/sparkreader/issues")
               withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
                 append("SparkReader app repository")
+              }
+              pop()
+
+              append("\n• For the Library (book discussions and suggestions): ")
+              pushStringAnnotation(tag = "URL", annotation = "https://github.com/sparkreaderapp/sparkreader-library/issues")
+              withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
+                append("SparkReader Library repository")
               }
               pop()
             }
