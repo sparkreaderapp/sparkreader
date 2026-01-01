@@ -197,7 +197,7 @@ fun AboutScreen(
             ) {
               CommunityButton(
                 icon = Icons.Default.BugReport,
-                label = "Bug Reports",
+                label = "App",
                 onClick = {
                   val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sparkreaderapp/sparkreader"))
                   context.startActivity(intent)
@@ -206,7 +206,7 @@ fun AboutScreen(
               
               CommunityButton(
                 icon = Icons.Default.Lightbulb,
-                label = "Book Library",
+                label = "Library",
                 onClick = {
                   val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sparkreaderapp/sparkreader-library"))
                   context.startActivity(intent)
