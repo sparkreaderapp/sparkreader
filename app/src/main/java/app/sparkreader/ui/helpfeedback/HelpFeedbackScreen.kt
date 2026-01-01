@@ -114,12 +114,7 @@ fun HelpFeedbackScreen(
     FaqItem(
       question = "How does the contextual explanation work?",
       slug = FaqSlug.CONTEXTUAL_EXPLANATION,
-      answer = """Unlike a traditional dictionary, SparkReader provides contextual explanations:
-
-• By selecting any piece of text while reading, two context menu buttons appear automatically
-• Explain: explains the selection while keeping the explanation relevant to the context of the page in question
-• Quote: copies the selection into the chat, so that you can ask questions about the selection.
-You can also ask follow-up questions in a conventional chat interface."""
+      answer = ""
     ),
     FaqItem(
       question = "What books are included in SparkReader Library?",
@@ -576,6 +571,36 @@ private fun ExpandableFaqCard(
                   }
                 }
               }
+            )
+          }
+          
+          FaqSlug.CONTEXTUAL_EXPLANATION -> {
+            val annotatedText = buildAnnotatedString {
+              append("Unlike a traditional dictionary, SparkReader provides contextual explanations:\n\n")
+              append("• By selecting any piece of text while reading, two context menu buttons appear automatically\n")
+              append("• ")
+              
+              withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)) {
+                append("Explain")
+              }
+              
+              append(": explains the selection while keeping the explanation relevant to the context of the page in question\n")
+              append("• ")
+              
+              withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)) {
+                append("Quote")
+              }
+              
+              append(": copies the selection into the chat, so that you can ask questions about the selection.\n")
+              append("You can also ask follow-up questions in a conventional chat interface.")
+            }
+            
+            ClickableText(
+              text = annotatedText,
+              style = MaterialTheme.typography.bodyMedium.copy(
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+              ),
+              onClick = { }
             )
           }
           
