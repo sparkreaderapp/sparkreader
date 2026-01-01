@@ -38,8 +38,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Book
-import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Update
@@ -195,8 +196,8 @@ fun AboutScreen(
               horizontalArrangement = Arrangement.SpaceEvenly
             ) {
               CommunityButton(
-                icon = Icons.Default.Code,
-                label = "GitHub",
+                icon = Icons.Default.BugReport,
+                label = "Bug Reports",
                 onClick = {
                   val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sparkreaderapp/sparkreader"))
                   context.startActivity(intent)
@@ -204,10 +205,10 @@ fun AboutScreen(
               )
               
               CommunityButton(
-                icon = Icons.Default.Chat,
-                label = "Discord",
+                icon = Icons.Default.Lightbulb,
+                label = "Book Library",
                 onClick = {
-                  val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://discord.gg/sparkreader"))
+                  val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sparkreaderapp/sparkreader-library"))
                   context.startActivity(intent)
                 }
               )
