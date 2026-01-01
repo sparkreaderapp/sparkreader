@@ -45,7 +45,7 @@ android {
     minSdk = 26
     targetSdk = 35
     versionCode = 4
-    versionName = "1.0.5"
+    versionName = "1.0.0"
 
     // Needed for HuggingFace auth workflows.
     //manifestPlaceholders["appAuthRedirectScheme"] = "app.sparkreader.oauth"
