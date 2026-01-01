@@ -122,20 +122,12 @@ fun AboutScreen(
         .padding(paddingValues),
       verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-      // App Header with gradient background
+      // App Header
       item {
         Box(
           modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp)
-            .background(
-              Brush.verticalGradient(
-                colors = listOf(
-                  MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                  MaterialTheme.colorScheme.surface
-                )
-              )
-            ),
+            .height(200.dp),
           contentAlignment = Alignment.Center
         ) {
           Column(
