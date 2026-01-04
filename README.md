@@ -12,9 +12,11 @@ An AI-powered ebook reader that provides contextual explanations while you read,
 
 ## About
 
-SparkReader combines reading with AI-powered understanding. Select any text while reading to get contextual explanations that go beyond simple definitions. Ask follow-up questions to deepen your comprehension, all while maintaining your reading flow.
+SparkReader solves a common reading problem: breaking flow to look up nuanced vocabulary, cultural references, or complex passages. By providing inline AI explanations, it removes friction and preserves your connection to the text.
 
-The app includes a curated collection of seminal public domain books from [Project Gutenberg](https://www.gutenberg.org/), covering philosophy, religion, science, law, fiction, and non-fiction across cultures and time periods.
+While Project Gutenberg offers around 75,000 public domain books, SparkReader focuses on a carefully curated, inclusive collection. For each category, we've selected well-known, representative works spanning different eras, countries, disciplines, and genres.
+
+The goal is to preserve a meaningful connection to our shared human heritage without letting the sheer number of available books, language barriers, or historical and cultural context become prohibitive.
 
 ## Links
 
