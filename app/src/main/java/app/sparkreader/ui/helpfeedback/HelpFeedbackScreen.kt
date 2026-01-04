@@ -300,7 +300,7 @@ private fun ExpandableFaqCard(
           FaqSlug.GETTING_STARTED -> {
             val annotatedText = buildAnnotatedString {
               append("To get started with SparkReader:\n\n")
-              append("1. Configure a local LLM (go to ")
+              append("1. Configure a local large language model (LLM)  (go to ")
               
               pushStringAnnotation(tag = "SETTINGS", annotation = "settings")
               withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
@@ -484,7 +484,7 @@ private fun ExpandableFaqCard(
             val annotatedText = buildAnnotatedString {
               append("We have endeavored to include seminal public domain books spanning the entirety of human history, from ancient times to the present, and across diverse world regions.\n")
               append("Our selection covers a wide range of disciplines, including philosophy, religion, science, and law, as well as literary fiction genres such as crime, thriller, and mystery, and non-fiction categories such as travel writing and biographies.\n\n")
-              append("The list is compiled using state-of-the-art foundational models to mitigate any chances of our human bias.\n\n")
+              append("The list is compiled using state-of-the-art foundational large language models (LLMs) to mitigate any chances of our human bias.\n\n")
               append("You can browse the full catalog and find out more at: ")
               
               pushStringAnnotation(tag = "URL", annotation = "https://sparkreader.app/library.html")
