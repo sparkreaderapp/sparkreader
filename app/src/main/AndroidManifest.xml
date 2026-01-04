@@ -31,7 +31,7 @@ Changes relative to the original are documented in docs/upstream/google-ai-edge-
         android:compileSdkVersion ="35"
         android:targetSdkVersion="35" />
 
-    <uses-permission android:name="android.permission.CAMERA" />
+<!--    <uses-permission android:name="android.permission.CAMERA" />-->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
     <uses-permission android:name="android.permission.INTERNET" />
