@@ -1963,7 +1963,7 @@ private fun IntroDialog(
     onDismissRequest = { onDismiss(dontShowAgain) },
     title = { 
       Text(
-        text = "Welcome to SparkReader",
+        text = "Welcome to reader screen!",
         style = MaterialTheme.typography.headlineSmall,
         color = MaterialTheme.colorScheme.primary
       ) 
@@ -1976,10 +1976,7 @@ private fun IntroDialog(
           text = "The first few pages contain Project Gutenberg license, table of contents, etc.",
           style = MaterialTheme.typography.bodyMedium
         )
-        
-        Row(
-          verticalAlignment = Alignment.CenterVertically
-        ) {
+
           Text(
             text = "As per ",
             style = MaterialTheme.typography.bodyMedium
@@ -1997,8 +1994,7 @@ private fun IntroDialog(
             text = ", no changes are allowed to the ebook contents, so we kept it as is. Adding a \"Skip Intro\" button is in our roadmap.",
             style = MaterialTheme.typography.bodyMedium
           )
-        }
-        
+
         Text(
           text = "Tip: Tap the left and right edges of the screen to navigate between pages.",
           style = MaterialTheme.typography.bodyMedium,
