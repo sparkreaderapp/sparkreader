@@ -160,6 +160,7 @@ fun BookDetailScreen(
   var showBookInfoDialog by remember { mutableStateOf(false) }
   var showPageInputDialog by remember { mutableStateOf(false) }
   var showSettingsDialog by remember { mutableStateOf(false) }
+  var showIntroDialog by remember { mutableStateOf(false) }
   
   val context = LocalContext.current
   val chatMessages by viewModel.chatMessages.collectAsState()
@@ -185,6 +186,11 @@ fun BookDetailScreen(
     
     // Clear previous book's messages immediately to prevent UI lag
     viewModel.clearChatMessages()
+    
+    // Check if we should show the intro dialog
+    if (!viewModel.getHasSeenIntroDialog()) {
+      showIntroDialog = true
+    }
     
     // Validate selected model at page launch
     launch {
@@ -1420,6 +1426,16 @@ fun BookDetailScreen(
         }
       )
     }
+    
+    // Intro dialog for first-time users
+    if (showIntroDialog) {
+      IntroDialog(
+        onDismiss = {
+          showIntroDialog = false
+          viewModel.saveHasSeenIntroDialog(true)
+        }
+      )
+    }
   }
 
 @Composable
@@ -1928,6 +1944,67 @@ private fun PageInputDialog(
     dismissButton = {
       TextButton(onClick = onDismiss) {
         Text("Cancel")
+      }
+    }
+  )
+}
+
+@Composable
+private fun IntroDialog(
+  onDismiss: () -> Unit
+) {
+  val uriHandler = LocalUriHandler.current
+  
+  AlertDialog(
+    onDismissRequest = onDismiss,
+    title = { 
+      Text(
+        text = "Welcome to SparkReader",
+        style = MaterialTheme.typography.headlineSmall
+      ) 
+    },
+    text = {
+      Column(
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+      ) {
+        Text(
+          text = "The first few pages contain Project Gutenberg license, table of contents, etc.",
+          style = MaterialTheme.typography.bodyMedium
+        )
+        
+        Row(
+          verticalAlignment = Alignment.CenterVertically
+        ) {
+          Text(
+            text = "As per ",
+            style = MaterialTheme.typography.bodyMedium
+          )
+          Text(
+            text = "PG License",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.primary,
+            textDecoration = TextDecoration.Underline,
+            modifier = Modifier.clickable {
+              uriHandler.openUri("https://www.gutenberg.org/policy/license.html")
+            }
+          )
+          Text(
+            text = ", no changes are allowed to the ebook contents, so we kept it as is. Adding a \"Skip Intro\" button is in our roadmap.",
+            style = MaterialTheme.typography.bodyMedium
+          )
+        }
+        
+        Text(
+          text = "Tip: Tap the left and right edges of the screen to navigate between pages.",
+          style = MaterialTheme.typography.bodyMedium,
+          fontWeight = FontWeight.Medium,
+          color = MaterialTheme.colorScheme.primary
+        )
+      }
+    },
+    confirmButton = {
+      TextButton(onClick = onDismiss) {
+        Text("Got it!")
       }
     }
   )

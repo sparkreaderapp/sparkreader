@@ -70,6 +70,10 @@ interface DataStoreRepository {
   fun saveFontSize(fontSize: Float)
   
   fun readFontSize(): Float
+  
+  fun saveHasSeenIntroDialog(hasSeen: Boolean)
+  
+  fun readHasSeenIntroDialog(): Boolean
 }
 
 /** Repository for managing data using Proto DataStore. */
@@ -225,6 +229,21 @@ class DefaultDataStoreRepository(private val dataStore: DataStore<Settings>) : D
       // Default to 18f if not set or if it's 0
       val size = settings.fontSize
       if (size == 0f) 18f else size
+    }
+  }
+  
+  override fun saveHasSeenIntroDialog(hasSeen: Boolean) {
+    runBlocking {
+      dataStore.updateData { settings ->
+        settings.toBuilder().setHasSeenIntroDialog(hasSeen).build()
+      }
+    }
+  }
+  
+  override fun readHasSeenIntroDialog(): Boolean {
+    return runBlocking {
+      val settings = dataStore.data.first()
+      settings.hasSeenIntroDialog
     }
   }
 }
