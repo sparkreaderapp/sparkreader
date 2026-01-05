@@ -771,6 +771,14 @@ class BookDetailViewModel @Inject constructor(
         dataStoreRepository.saveFontSize(size)
     }
     
+    fun getHasSeenIntroDialog(): Boolean {
+        return dataStoreRepository.readHasSeenIntroDialog()
+    }
+    
+    fun saveHasSeenIntroDialog(hasSeen: Boolean) {
+        dataStoreRepository.saveHasSeenIntroDialog(hasSeen)
+    }
+    
     override fun onCleared() {
         super.onCleared()
         gemmaInferenceHelper.close()
