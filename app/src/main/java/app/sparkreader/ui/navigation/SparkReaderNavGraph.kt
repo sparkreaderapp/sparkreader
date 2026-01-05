@@ -63,6 +63,10 @@ import app.sparkreader.ui.createbook.CreateBookScreen
 import app.sparkreader.ui.demo.DemoScreen
 import app.sparkreader.ui.modelmanager.ModelManager
 import app.sparkreader.ui.modelmanager.ModelManagerViewModel
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import com.google.gson.Gson
+import java.io.File
 
 private const val TAG = "AGSparkReaderNavGraph"
 private const val ROUTE_NEW_HOME = "new_home"
@@ -172,14 +176,12 @@ fun SparkReaderNavHost(
       exitTransition = { slideExit() }
     ) { backStackEntry ->
       val bookId = backStackEntry.arguments?.getString("bookId")
-      // TODO: Get book by ID from repository
-      // For now, create a placeholder book
-      val book = Book(
-        id = bookId ?: "",
-        title = "Book Title",
-        author = "Author",
-        description = "Description"
-      )
+      val context = LocalContext.current
+      
+      // Load book data from file system
+      val book = remember(bookId) {
+        loadBookFromFileSystem(context, bookId ?: "")
+      }
       
       BookDetailScreen(
         book = book,
@@ -352,4 +354,78 @@ fun navigateToTaskScreen(
 ) {
   // Currently no task screens are implemented
   // This function is kept for future extensibility
+}
+
+private fun loadBookFromFileSystem(context: android.content.Context, bookId: String): Book {
+  return try {
+    val gson = Gson()
+    val libraryDir = File(context.filesDir, "library")
+    val bookDir = File(libraryDir, bookId)
+    
+    if (!bookDir.exists() || !bookDir.isDirectory) {
+      return createPlaceholderBook(bookId)
+    }
+    
+    // Try to load book metadata
+    val metadataFile = File(bookDir, "metadata.json")
+    if (metadataFile.exists()) {
+      val metadataJson = metadataFile.readText()
+      val metadata = gson.fromJson(metadataJson, Map::class.java) as? Map<String, Any>
+      
+      if (metadata != null) {
+        return Book(
+          id = bookId,
+          title = metadata["title"] as? String ?: "Unknown Title",
+          author = metadata["author"] as? String ?: "Unknown Author",
+          description = metadata["description"] as? String ?: "",
+          date = metadata["date"] as? String,
+          libraryId = bookId,
+          totalPages = (metadata["totalPages"] as? Double)?.toInt() ?: countPagesInDirectory(bookDir),
+          wordsPerPage = (metadata["wordsPerPage"] as? Double)?.toInt(),
+          lastReadPage = (metadata["lastReadPage"] as? Double)?.toInt() ?: 0,
+          source = metadata["source"] as? String,
+          source_link = metadata["source_link"] as? String,
+          tags = metadata["tags"] as? String
+        )
+      }
+    }
+    
+    // Fallback: count pages and create basic book info
+    val totalPages = countPagesInDirectory(bookDir)
+    return Book(
+      id = bookId,
+      title = "Unknown Title",
+      author = "Unknown Author", 
+      description = "",
+      libraryId = bookId,
+      totalPages = totalPages,
+      lastReadPage = 0
+    )
+  } catch (e: Exception) {
+    Log.e(TAG, "Error loading book from file system: $bookId", e)
+    return createPlaceholderBook(bookId)
+  }
+}
+
+private fun createPlaceholderBook(bookId: String): Book {
+  return Book(
+    id = bookId,
+    title = "Book Not Found",
+    author = "Unknown Author",
+    description = "Could not load book data",
+    libraryId = bookId,
+    totalPages = 1,
+    lastReadPage = 0
+  )
+}
+
+private fun countPagesInDirectory(bookDir: File): Int {
+  return try {
+    val pageFiles = bookDir.listFiles { file ->
+      file.name.startsWith("page_") && file.name.endsWith(".json")
+    }
+    pageFiles?.size ?: 0
+  } catch (e: Exception) {
+    0
+  }
 }
