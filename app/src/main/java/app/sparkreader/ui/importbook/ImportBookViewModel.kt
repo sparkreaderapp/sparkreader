@@ -293,8 +293,8 @@ class ImportBookViewModel @Inject constructor(
         }
         
         if (!bookExists) {
-          // Generate a new ID for the book
-          val newId = if (currentBooks.isEmpty()) 1 else currentBooks.maxOf { it.id } + 1
+          // Use the library book ID directly as the new book ID
+          val newId = libraryBook.id
           
           // Convert LibraryBook to Book with pagination info
           val newBook = Book(
@@ -392,7 +392,7 @@ class ImportBookViewModel @Inject constructor(
               userBooksFile.writeText(jsonContent)
               
               // Remove the paginated book data using the library ID if available
-              val bookDirId = bookToRemove.libraryId ?: bookToRemove.id.toString()
+              val bookDirId = bookToRemove.libraryId ?: bookToRemove.id
               val bookDir = File(libraryPagesDir, bookDirId)
               if (bookDir.exists()) {
                 bookDir.deleteRecursively()
