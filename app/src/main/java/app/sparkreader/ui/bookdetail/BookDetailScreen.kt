@@ -145,6 +145,7 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Checkbox
 import app.sparkreader.data.BookTagUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -1430,9 +1431,11 @@ fun BookDetailScreen(
     // Intro dialog for first-time users
     if (showIntroDialog) {
       IntroDialog(
-        onDismiss = {
+        onDismiss = { dontShowAgain ->
           showIntroDialog = false
-          viewModel.saveHasSeenIntroDialog(true)
+          if (dontShowAgain) {
+            viewModel.saveHasSeenIntroDialog(true)
+          }
         }
       )
     }
@@ -1951,16 +1954,18 @@ private fun PageInputDialog(
 
 @Composable
 private fun IntroDialog(
-  onDismiss: () -> Unit
+  onDismiss: (dontShowAgain: Boolean) -> Unit
 ) {
   val uriHandler = LocalUriHandler.current
+  var dontShowAgain by remember { mutableStateOf(false) }
   
   AlertDialog(
-    onDismissRequest = onDismiss,
+    onDismissRequest = { onDismiss(dontShowAgain) },
     title = { 
       Text(
         text = "Welcome to SparkReader",
-        style = MaterialTheme.typography.headlineSmall
+        style = MaterialTheme.typography.headlineSmall,
+        color = MaterialTheme.colorScheme.primary
       ) 
     },
     text = {
@@ -2000,10 +2005,32 @@ private fun IntroDialog(
           fontWeight = FontWeight.Medium,
           color = MaterialTheme.colorScheme.primary
         )
+        
+        // Don't show again checkbox
+        Row(
+          verticalAlignment = Alignment.CenterVertically,
+          modifier = Modifier.padding(top = 8.dp)
+        ) {
+          Checkbox(
+            checked = dontShowAgain,
+            onCheckedChange = { dontShowAgain = it }
+          )
+          Spacer(modifier = Modifier.width(8.dp))
+          Text(
+            text = "Don't show again",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+          )
+        }
       }
     },
     confirmButton = {
-      TextButton(onClick = onDismiss) {
+      TextButton(
+        onClick = { onDismiss(dontShowAgain) },
+        colors = androidx.compose.material3.ButtonDefaults.textButtonColors(
+          contentColor = MaterialTheme.colorScheme.primary
+        )
+      ) {
         Text("Got it!")
       }
     }
