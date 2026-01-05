@@ -147,6 +147,10 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Checkbox
 import app.sparkreader.data.BookTagUtils
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -1977,23 +1981,31 @@ private fun IntroDialog(
           style = MaterialTheme.typography.bodyMedium
         )
 
-          Text(
-            text = "As per ",
-            style = MaterialTheme.typography.bodyMedium
-          )
-          Text(
-            text = "PG License",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.primary,
-            textDecoration = TextDecoration.Underline,
-            modifier = Modifier.clickable {
-              uriHandler.openUri("https://www.gutenberg.org/policy/license.html")
+        val annotatedText = buildAnnotatedString {
+          append("As per ")
+          
+          pushStringAnnotation(tag = "URL", annotation = "https://www.gutenberg.org/policy/license.html")
+          withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
+            append("PG License")
+          }
+          pop()
+          
+          append(", no changes are allowed to the ebook contents, so we kept it as is. Adding a \"Skip Intro\" button is in our roadmap.")
+        }
+        
+        ClickableText(
+          text = annotatedText,
+          style = MaterialTheme.typography.bodyMedium.copy(
+            color = MaterialTheme.colorScheme.onSurface
+          ),
+          onClick = { offset ->
+            val annotations = annotatedText.getStringAnnotations(tag = "URL", start = offset, end = offset)
+            if (annotations.isNotEmpty()) {
+              val annotation = annotations.first()
+              uriHandler.openUri(annotation.item)
             }
-          )
-          Text(
-            text = ", no changes are allowed to the ebook contents, so we kept it as is. Adding a \"Skip Intro\" button is in our roadmap.",
-            style = MaterialTheme.typography.bodyMedium
-          )
+          }
+        )
 
         Text(
           text = "Tip: Tap the left and right edges of the screen to navigate between pages.",
