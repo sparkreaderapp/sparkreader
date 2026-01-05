@@ -772,11 +772,27 @@ class BookDetailViewModel @Inject constructor(
     }
     
     fun getHasSeenIntroDialog(): Boolean {
-        return dataStoreRepository.readHasSeenIntroDialog()
+        return try {
+            val file = File(context.filesDir, "intro_dialog_seen.txt")
+            file.exists()
+        } catch (e: Exception) {
+            false
+        }
     }
     
     fun saveHasSeenIntroDialog(hasSeen: Boolean) {
-        dataStoreRepository.saveHasSeenIntroDialog(hasSeen)
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val file = File(context.filesDir, "intro_dialog_seen.txt")
+                if (hasSeen) {
+                    file.writeText("true")
+                } else {
+                    file.delete()
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("BookDetailViewModel", "Failed to save intro dialog state", e)
+            }
+        }
     }
     
     override fun onCleared() {
