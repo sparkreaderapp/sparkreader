@@ -66,6 +66,7 @@ import app.sparkreader.ui.modelmanager.ModelManagerViewModel
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.io.File
 
 private const val TAG = "AGSparkReaderNavGraph"
@@ -359,54 +360,27 @@ fun navigateToTaskScreen(
 private fun loadBookFromFileSystem(context: android.content.Context, bookId: String): Book {
   return try {
     val gson = Gson()
-    val libraryDir = File(context.filesDir, "library")
-    val bookDir = File(libraryDir, bookId)
     
-    if (!bookDir.exists() || !bookDir.isDirectory) {
-      return createPlaceholderBook(bookId)
-    }
-    
-    // Try to load book metadata
-    val metadataFile = File(bookDir, "metadata.json")
-    if (metadataFile.exists()) {
-      val metadataJson = metadataFile.readText()
-      Log.d(TAG, "Loading metadata for book $bookId: $metadataJson")
-      val metadata = gson.fromJson(metadataJson, Map::class.java) as? Map<String, Any>
+    // Load from the same books.json file that ImportBookViewModel uses
+    val userBooksFile = File(context.filesDir, "books.json")
+    if (userBooksFile.exists()) {
+      val jsonContent = userBooksFile.readText()
+      val type = object : com.google.gson.reflect.TypeToken<List<Book>>() {}.type
+      val books: List<Book> = gson.fromJson(jsonContent, type) ?: emptyList()
       
-      if (metadata != null) {
-        val title = metadata["title"] as? String ?: "Unknown Title"
-        Log.d(TAG, "Loaded book title: $title")
-        return Book(
-          id = bookId,
-          title = title,
-          author = metadata["author"] as? String ?: "Unknown Author",
-          description = metadata["description"] as? String ?: "",
-          date = metadata["date"] as? String,
-          libraryId = bookId,
-          totalPages = (metadata["totalPages"] as? Double)?.toInt() ?: countPagesInDirectory(bookDir),
-          wordsPerPage = (metadata["wordsPerPage"] as? Double)?.toInt(),
-          lastReadPage = (metadata["lastReadPage"] as? Double)?.toInt() ?: 0,
-          source = metadata["source"] as? String,
-          source_link = metadata["source_link"] as? String,
-          tags = metadata["tags"] as? String
-        )
+      // Find the book by ID
+      val book = books.find { it.id == bookId }
+      if (book != null) {
+        Log.d(TAG, "Loaded book from books.json: ${book.title}")
+        return book
       }
     }
     
-    // Fallback: count pages and create basic book info
-    val totalPages = countPagesInDirectory(bookDir)
-    Log.d(TAG, "No metadata found for book $bookId, using fallback title")
-    return Book(
-      id = bookId,
-      title = bookId, // Use bookId as title if no metadata
-      author = "Unknown Author", 
-      description = "",
-      libraryId = bookId,
-      totalPages = totalPages,
-      lastReadPage = 0
-    )
+    // Fallback: create placeholder book
+    Log.d(TAG, "Book not found in books.json for ID: $bookId")
+    return createPlaceholderBook(bookId)
   } catch (e: Exception) {
-    Log.e(TAG, "Error loading book from file system: $bookId", e)
+    Log.e(TAG, "Error loading book from books.json: $bookId", e)
     return createPlaceholderBook(bookId)
   }
 }
