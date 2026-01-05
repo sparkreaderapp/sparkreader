@@ -370,12 +370,15 @@ private fun loadBookFromFileSystem(context: android.content.Context, bookId: Str
     val metadataFile = File(bookDir, "metadata.json")
     if (metadataFile.exists()) {
       val metadataJson = metadataFile.readText()
+      Log.d(TAG, "Loading metadata for book $bookId: $metadataJson")
       val metadata = gson.fromJson(metadataJson, Map::class.java) as? Map<String, Any>
       
       if (metadata != null) {
+        val title = metadata["title"] as? String ?: "Unknown Title"
+        Log.d(TAG, "Loaded book title: $title")
         return Book(
           id = bookId,
-          title = metadata["title"] as? String ?: "Unknown Title",
+          title = title,
           author = metadata["author"] as? String ?: "Unknown Author",
           description = metadata["description"] as? String ?: "",
           date = metadata["date"] as? String,
@@ -392,9 +395,10 @@ private fun loadBookFromFileSystem(context: android.content.Context, bookId: Str
     
     // Fallback: count pages and create basic book info
     val totalPages = countPagesInDirectory(bookDir)
+    Log.d(TAG, "No metadata found for book $bookId, using fallback title")
     return Book(
       id = bookId,
-      title = "Unknown Title",
+      title = bookId, // Use bookId as title if no metadata
       author = "Unknown Author", 
       description = "",
       libraryId = bookId,
