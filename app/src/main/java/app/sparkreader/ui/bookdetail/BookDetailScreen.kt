@@ -1836,21 +1836,17 @@ private fun loadSinglePage(context: android.content.Context, bookId: String, pag
     val bookDir = File(libraryDir, bookId)
     
     if (!bookDir.exists() || !bookDir.isDirectory) {
-      android.util.Log.w("BookDetailScreen", "Book directory not found: ${bookDir.absolutePath}")
       return null
     }
     
     val pageFile = File(bookDir, "page_$pageNumber.json")
     if (!pageFile.exists()) {
-      android.util.Log.w("BookDetailScreen", "Page file not found: ${pageFile.absolutePath}")
       return null
     }
     
     val pageData = gson.fromJson(pageFile.readText(), BookPage::class.java)
-    android.util.Log.d("BookDetailScreen", "Loaded page $pageNumber for book: $bookId")
     return pageData
   } catch (e: Exception) {
-    android.util.Log.e("BookDetailScreen", "Error loading page $pageNumber", e)
     return null
   }
 }
