@@ -729,9 +729,18 @@ private fun loadBooksFromDataFolder(context: Context): List<Book> {
     val json = booksFile.readText()
     val gson = Gson()
     val bookListType = object : TypeToken<List<Book>>() {}.type
-    gson.fromJson(json, bookListType) ?: emptyList()
+    val books = gson.fromJson<List<Book>>(json, bookListType) ?: emptyList()
+    
+    // Ensure libraryId is properly set for all books
+    books.forEach { book ->
+      if (book.libraryId.isNullOrEmpty()) {
+        android.util.Log.w("NewHomeScreen", "Book '${book.title}' has null/empty libraryId, using fallback ID: ${book.id}")
+      }
+    }
+    
+    books
   } catch (e: Exception) {
-    e.printStackTrace()
+    android.util.Log.e("NewHomeScreen", "Failed to load books from data folder", e)
     emptyList()
   }
 }

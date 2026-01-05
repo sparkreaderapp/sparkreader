@@ -497,7 +497,7 @@ fun CreateBookScreen(
 
                 // Create book metadata
                 val bookMetadata = app.sparkreader.ui.newhome.Book(
-                    id = bookToEdit?.id ?: bookId.hashCode(),
+                    id = "", //bookToEdit?.id ?: bookId.hashCode(),
                     title = title,
                     author = author,
                     date = bookToEdit?.date ?: "Created on ${
