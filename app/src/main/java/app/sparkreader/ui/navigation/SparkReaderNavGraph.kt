@@ -171,11 +171,11 @@ fun SparkReaderNavHost(
       enterTransition = { slideEnter() },
       exitTransition = { slideExit() }
     ) { backStackEntry ->
-      val bookId = backStackEntry.arguments?.getString("bookId")?.toIntOrNull()
+      val bookId = backStackEntry.arguments?.getString("bookId")
       // TODO: Get book by ID from repository
       // For now, create a placeholder book
       val book = Book(
-        id = bookId ?: 0,
+        id = bookId ?: "",
         title = "Book Title",
         author = "Author",
         description = "Description"
