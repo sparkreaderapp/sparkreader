@@ -27,6 +27,7 @@ import app.sparkreader.data.STOP_BUTTON_WORD_THRESHOLD
 import app.sparkreader.data.INITIAL_MESSAGE_LOAD_COUNT
 import app.sparkreader.data.LOAD_MORE_MESSAGE_COUNT
 import app.sparkreader.llm.GemmaInferenceHelper
+import app.sparkreader.llm.OnlineInferenceHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -286,21 +287,26 @@ class BookDetailViewModel @Inject constructor(
                 throw ModelNotFoundException(validationResult.errorMessage ?: "Model validation failed")
             }
             
-            val selectedModel = validationResult.model!!
+            val isOnlineModel = validationResult.isOnline
+            val selectedModel = validationResult.model
             
-            // Initialize model if needed
-            if (selectedModel.instance == null) {
-                // Only show initializing message if this is the current generation
-                if (generationId == currentGenerationId) {
-                    withContext(Dispatchers.Main) {
-                        _chatMessages.value = _chatMessages.value + BookChatMessage("Initializing AI model...", false)
+            if (!isOnlineModel) {
+                val localModel = selectedModel
+                    ?: throw ModelNotFoundException("Default AI model configuration error")
+                // Initialize model if needed
+                if (localModel.instance == null) {
+                    // Only show initializing message if this is the current generation
+                    if (generationId == currentGenerationId) {
+                        withContext(Dispatchers.Main) {
+                            _chatMessages.value = _chatMessages.value + BookChatMessage("Initializing AI model...", false)
+                        }
                     }
-                }
-                initializeModel(selectedModel)
-                // Remove the initializing message only if this is still the current generation
-                if (generationId == currentGenerationId) {
-                    withContext(Dispatchers.Main) {
-                        _chatMessages.value = _chatMessages.value.dropLast(1)
+                    initializeModel(localModel)
+                    // Remove the initializing message only if this is still the current generation
+                    if (generationId == currentGenerationId) {
+                        withContext(Dispatchers.Main) {
+                            _chatMessages.value = _chatMessages.value.dropLast(1)
+                        }
                     }
                 }
             }
@@ -318,93 +324,109 @@ class BookDetailViewModel @Inject constructor(
             val accumulatedResponse = StringBuilder()
             var wordCount = 0
             
-            // Only update temperature and reset session if temperature has changed or if we need a new session
-            if (temperature != lastAppliedTemperature || needsNewSession) {
-                val updatedConfigValues = selectedModel.configValues.toMutableMap()
-                updatedConfigValues["temperature"] = temperature
-                selectedModel.configValues = updatedConfigValues
-                LlmChatModelHelper.resetSession(selectedModel)
-                lastAppliedTemperature = temperature
-                needsNewSession = false
-            }
-            
-            LlmChatModelHelper.runInference(
-                model = selectedModel,
-                input = prompt,
-                resultListener = { partialResult, done ->
-                    // Only process if this is the current generation
-                    if (generationId == currentGenerationId) {
-                        accumulatedResponse.append(partialResult)
-                        
-                        // Count words in the accumulated response
-                        val currentText = accumulatedResponse.toString().trim()
-                        wordCount = currentText.split("\\s+".toRegex()).filter { it.isNotEmpty() }.size
-                        
-                        viewModelScope.launch(Dispatchers.Main) {
-                            // Double-check this is still the current generation
-                            if (generationId == currentGenerationId && streamingMessageIndex >= 0) {
-                                // Update the streaming message
-                                val messages = _chatMessages.value.toMutableList()
-                                if (streamingMessageIndex < messages.size) {
-                                    // Show accumulated response or keep "Please wait..." if no content yet
-                                    val displayText = if (currentText.isEmpty()) {
-                                        "Please wait..."
-                                    } else {
-                                        currentText
-                                    }
-                                    messages[streamingMessageIndex] = BookChatMessage(
-                                        displayText,
-                                        false,
-                                        !done, // Set isStreaming to true while still generating, false when done
-                                        wordCount
-                                    )
-                                    _chatMessages.value = messages
-                                }
-                                
-                                if (done) {
-                                    _isGenerating.value = false
-                                    // Save chat history when response is complete
-                                    currentBookId?.let { bookId ->
-                                        saveChatHistory(bookId)
-                                    }
-                                }
-                            }
-                        }
-                    }
+            val resultListener: (String, Boolean) -> Unit = { partialResult, done ->
+                // Only process if this is the current generation
+                if (generationId == currentGenerationId) {
+                    accumulatedResponse.append(partialResult)
                     
-                    // Clean up when done
-                    if (done) {
-                        viewModelScope.launch(Dispatchers.IO) {
-                            activeGenerations.remove(generationId)
+                    // Count words in the accumulated response
+                    val currentText = accumulatedResponse.toString().trim()
+                    wordCount = currentText.split("\\s+".toRegex()).filter { it.isNotEmpty() }.size
+                    
+                    viewModelScope.launch(Dispatchers.Main) {
+                        // Double-check this is still the current generation
+                        if (generationId == currentGenerationId && streamingMessageIndex >= 0) {
+                            // Update the streaming message
+                            val messages = _chatMessages.value.toMutableList()
+                            if (streamingMessageIndex < messages.size) {
+                                // Show accumulated response or keep "Please wait..." if no content yet
+                                val displayText = if (currentText.isEmpty()) {
+                                    "Please wait..."
+                                } else {
+                                    currentText
+                                }
+                                messages[streamingMessageIndex] = BookChatMessage(
+                                    displayText,
+                                    false,
+                                    !done, // Set isStreaming to true while still generating, false when done
+                                    wordCount
+                                )
+                                _chatMessages.value = messages
+                            }
                             
-                            // If this was a cancelled generation, close its session
-                            if (cancelledGenerations.contains(generationId)) {
-                                cancelledGenerations.remove(generationId)
-                                try {
-                                    // Note: We already created a new session when stop was pressed,
-                                    // so we just need to clean up the cancelled generation
-                                    android.util.Log.d("BookDetailViewModel", "Cleaned up cancelled generation: $generationId")
-                                } catch (e: Exception) {
-                                    android.util.Log.e("BookDetailViewModel", "Failed to clean up cancelled generation", e)
+                            if (done) {
+                                _isGenerating.value = false
+                                // Save chat history when response is complete
+                                currentBookId?.let { bookId ->
+                                    saveChatHistory(bookId)
                                 }
                             }
                         }
-                    }
-                },
-                cleanUpListener = {
-                    viewModelScope.launch(Dispatchers.Main) {
-                        // Only update UI state if this is the current generation
-                        if (generationId == currentGenerationId) {
-                            _isGenerating.value = false
-                        }
-                    }
-                    // Always remove from active generations
-                    viewModelScope.launch(Dispatchers.IO) {
-                        activeGenerations.remove(generationId)
-                        cancelledGenerations.remove(generationId)
                     }
                 }
-            )
+                
+                // Clean up when done
+                if (done) {
+                    viewModelScope.launch(Dispatchers.IO) {
+                        activeGenerations.remove(generationId)
+                        
+                        // If this was a cancelled generation, close its session
+                        if (cancelledGenerations.contains(generationId)) {
+                            cancelledGenerations.remove(generationId)
+                            try {
+                                // Note: We already created a new session when stop was pressed,
+                                // so we just need to clean up the cancelled generation
+                                android.util.Log.d("BookDetailViewModel", "Cleaned up cancelled generation: $generationId")
+                            } catch (e: Exception) {
+                                android.util.Log.e("BookDetailViewModel", "Failed to clean up cancelled generation", e)
+                            }
+                        }
+                    }
+                }
+            }
+            
+            val cleanUpListener = {
+                viewModelScope.launch(Dispatchers.Main) {
+                    // Only update UI state if this is the current generation
+                    if (generationId == currentGenerationId) {
+                        _isGenerating.value = false
+                    }
+                }
+                // Always remove from active generations
+                viewModelScope.launch(Dispatchers.IO) {
+                    activeGenerations.remove(generationId)
+                    cancelledGenerations.remove(generationId)
+                }
+                Unit
+            }
+            
+            if (isOnlineModel) {
+                OnlineInferenceHelper.runInference(
+                    input = prompt,
+                    resultListener = resultListener,
+                    cleanUpListener = cleanUpListener
+                )
+            } else {
+                val localModel = selectedModel
+                    ?: throw ModelNotFoundException("Default AI model configuration error")
+                
+                // Only update temperature and reset session if temperature has changed or if we need a new session
+                if (temperature != lastAppliedTemperature || needsNewSession) {
+                    val updatedConfigValues = localModel.configValues.toMutableMap()
+                    updatedConfigValues["temperature"] = temperature
+                    localModel.configValues = updatedConfigValues
+                    LlmChatModelHelper.resetSession(localModel)
+                    lastAppliedTemperature = temperature
+                    needsNewSession = false
+                }
+                
+                LlmChatModelHelper.runInference(
+                    model = localModel,
+                    input = prompt,
+                    resultListener = resultListener,
+                    cleanUpListener = cleanUpListener
+                )
+            }
             
         } catch (e: Exception) {
             // Only show error if this is the current generation

@@ -96,6 +96,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import app.sparkreader.ui.modelmanager.ModelManagerUiState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import app.sparkreader.data.ONLINE_MODEL_NAME
 
 private val THEME_OPTIONS = listOf(Theme.THEME_AUTO, Theme.THEME_LIGHT, Theme.THEME_DARK)
 
@@ -716,6 +717,12 @@ private fun ModelManagerSection(
       // Expanded content
       if (expanded) {
         Spacer(modifier = Modifier.height(16.dp))
+
+        OnlineModelItem(
+          selectedModelName = selectedModelName,
+          onSetDefault = { modelManagerViewModel.setSelectedModel(ONLINE_MODEL_NAME) },
+          modifier = Modifier.padding(vertical = 4.dp)
+        )
         
         // Models list
         models.forEach { model ->
@@ -1004,6 +1011,108 @@ private fun ModelItem(
           }
         }
       }
+    }
+  }
+}
+
+@Composable
+private fun OnlineModelItem(
+  selectedModelName: String?,
+  onSetDefault: () -> Unit,
+  modifier: Modifier = Modifier,
+) {
+  val isSelected = selectedModelName == ONLINE_MODEL_NAME
+
+  Box(
+    modifier = modifier
+      .fillMaxWidth()
+      .border(
+        width = 1.dp,
+        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+        shape = RoundedCornerShape(8.dp)
+      )
+  ) {
+    Column(
+      modifier = Modifier
+        .fillMaxWidth()
+        .padding(12.dp),
+      verticalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+      Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+      ) {
+        Text(
+          text = ONLINE_MODEL_NAME,
+          style = MaterialTheme.typography.titleSmall,
+          fontWeight = FontWeight.Medium,
+          modifier = Modifier.weight(1f)
+        )
+
+        Row(
+          horizontalArrangement = Arrangement.spacedBy(6.dp),
+          verticalAlignment = Alignment.CenterVertically
+        ) {
+          Box(
+            modifier = Modifier
+              .background(
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                shape = RoundedCornerShape(8.dp)
+              )
+              .padding(horizontal = 8.dp, vertical = 2.dp)
+          ) {
+            Text(
+              text = "Online",
+              style = MaterialTheme.typography.labelSmall,
+              color = MaterialTheme.colorScheme.onSecondaryContainer,
+              fontWeight = FontWeight.Medium
+            )
+          }
+
+          if (isSelected) {
+            Box(
+              modifier = Modifier
+                .background(
+                  color = MaterialTheme.colorScheme.primary,
+                  shape = RoundedCornerShape(8.dp)
+                )
+                .padding(horizontal = 8.dp, vertical = 2.dp)
+            ) {
+              Text(
+                text = "Default",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onPrimary,
+                fontWeight = FontWeight.Medium
+              )
+            }
+          } else {
+            Box(
+              modifier = Modifier
+                .clip(RoundedCornerShape(8.dp))
+                .border(
+                  width = 1.dp,
+                  color = MaterialTheme.colorScheme.primary,
+                  shape = RoundedCornerShape(8.dp)
+                )
+                .clickable { onSetDefault() }
+                .padding(horizontal = 8.dp, vertical = 2.dp)
+            ) {
+              Text(
+                text = "Set default",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Medium
+              )
+            }
+          }
+        }
+      }
+
+      Text(
+        text = "Always available. Uses a cloud model (internet required).",
+        style = MaterialTheme.typography.labelSmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+      )
     }
   }
 }

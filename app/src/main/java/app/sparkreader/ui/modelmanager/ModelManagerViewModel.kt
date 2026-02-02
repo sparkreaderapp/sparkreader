@@ -42,6 +42,7 @@ import app.sparkreader.data.Model
 import app.sparkreader.data.ModelAllowlist
 import app.sparkreader.data.ModelDownloadStatus
 import app.sparkreader.data.ModelDownloadStatusType
+import app.sparkreader.data.ONLINE_MODEL_NAME
 import app.sparkreader.data.TASKS
 import app.sparkreader.data.TASK_LLM_ASK_IMAGE
 import app.sparkreader.data.Task
@@ -516,6 +517,10 @@ open class ModelManagerViewModel @Inject constructor(
         val singleModel = downloadedModels.first()
         val currentSelected = dataStoreRepository.readSelectedModel()
         
+        if (currentSelected == ONLINE_MODEL_NAME) {
+          return@launch
+        }
+        
         if (currentSelected.isNullOrEmpty() || !isModelDownloaded(getModelByName(currentSelected) ?: EMPTY_MODEL)) {
           dataStoreRepository.saveSelectedModel(singleModel.name)
           _uiState.update { currentState ->
@@ -538,6 +543,9 @@ open class ModelManagerViewModel @Inject constructor(
       val allModels = getAllModelsFromTasks()
       
       if (!selectedModelName.isNullOrEmpty()) {
+        if (selectedModelName == ONLINE_MODEL_NAME) {
+          return@launch
+        }
         // Check if the selected model still exists AND is downloaded
         val selectedModel = allModels.firstOrNull { model ->
           model.name == selectedModelName

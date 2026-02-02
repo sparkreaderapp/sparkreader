@@ -22,6 +22,7 @@ import app.sparkreader.data.ConfigKey
 import app.sparkreader.data.DataStoreRepository
 import app.sparkreader.data.getModelByName
 import app.sparkreader.data.TASK_LLM_ASK_IMAGE
+import app.sparkreader.data.ONLINE_MODEL_NAME
 import com.google.mediapipe.tasks.genai.llminference.LlmInference
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -32,6 +33,7 @@ import javax.inject.Singleton
 
 data class ModelValidationResult(
     val isValid: Boolean,
+    val isOnline: Boolean = false,
     val model: Model? = null,
     val modelFile: File? = null,
     val errorMessage: String? = null
@@ -93,6 +95,19 @@ class GemmaInferenceHelper @Inject constructor(
                     isValid = false,
                     errorMessage = if (task == "text") "AI model is needed for contextual explanations and chat." else
                         "AI model is needed for converting image to text."
+                )
+            }
+
+            if (selectedModelName == ONLINE_MODEL_NAME) {
+                if (task == "image") {
+                    return@withContext ModelValidationResult(
+                        isValid = false,
+                        errorMessage = "Online model doesn't support image analysis."
+                    )
+                }
+                return@withContext ModelValidationResult(
+                    isValid = true,
+                    isOnline = true
                 )
             }
             
